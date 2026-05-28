@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <title>ULTRA BUTTON</title>
 
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
   <style>
+
     body {
       margin: 0;
       background: black;
@@ -13,8 +21,11 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      height: 100dvh;
+      padding-top: env(safe-area-inset-top);
       font-family: sans-serif;
+      transition: background 0.1s;
+      overflow: hidden;
     }
 
     h1 {
@@ -38,12 +49,19 @@
       color: white;
       font-size: 40px;
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
 
     button:active {
       transform: scale(0.95);
     }
+
+    .flash {
+      background: #330000;
+    }
+
   </style>
+
 </head>
 
 <body>
@@ -56,7 +74,9 @@
     PUSH
   </button>
 
-  <audio id="sound" src="ultra.mp3"></audio>
+  <audio id="sound" preload="auto">
+    <source src="ultra.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
 
@@ -76,8 +96,18 @@
 
       localStorage.setItem("ultraCount", count);
 
+      sound.pause();
       sound.currentTime = 0;
-      sound.play();
+
+      sound.play().catch((error) => {
+        console.log(error);
+      });
+
+      document.body.classList.add("flash");
+
+      setTimeout(() => {
+        document.body.classList.remove("flash");
+      }, 100);
 
     });
 
@@ -94,4 +124,5 @@
   </script>
 
 </body>
+
 </html>
