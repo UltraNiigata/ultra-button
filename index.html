@@ -32,6 +32,7 @@
       font-size: 80px;
       margin: 0;
       letter-spacing: 10px;
+      text-align: center;
     }
 
     #count {
@@ -74,14 +75,9 @@
     PUSH
   </button>
 
-  <audio id="sound" preload="auto">
-    <source src="ultra.mp3" type="audio/mpeg">
-  </audio>
-
   <script>
 
     const button = document.getElementById("ultraButton");
-    const sound = document.getElementById("sound");
     const countDisplay = document.getElementById("count");
 
     let count = localStorage.getItem("ultraCount") || 0;
@@ -96,10 +92,9 @@
 
       localStorage.setItem("ultraCount", count);
 
-      sound.pause();
-      sound.currentTime = 0;
+      const s = new Audio("ultra.mp3");
 
-      sound.play().catch((error) => {
+      s.play().catch((error) => {
         console.log(error);
       });
 
