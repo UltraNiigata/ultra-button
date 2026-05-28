@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>ULTRA BUTTON</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: red;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+    }
+
+    h1 {
+      font-size: 80px;
+      margin: 0;
+      letter-spacing: 10px;
+    }
+
+    #count {
+      font-size: 120px;
+      margin-top: 20px;
+    }
+
+    button {
+      margin-top: 40px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: none;
+      background: red;
+      color: white;
+      font-size: 40px;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>ULTRA COUNT</h1>
+
+  <div id="count">0</div>
+
+  <button id="ultraButton">
+    PUSH
+  </button>
+
+  <audio id="sound" src="ultra.mp3"></audio>
+
+  <script>
+
+    const button = document.getElementById("ultraButton");
+    const sound = document.getElementById("sound");
+    const countDisplay = document.getElementById("count");
+
+    let count = localStorage.getItem("ultraCount") || 0;
+
+    countDisplay.textContent = count;
+
+    button.addEventListener("click", () => {
+
+      count++;
+
+      countDisplay.textContent = count;
+
+      localStorage.setItem("ultraCount", count);
+
+      sound.currentTime = 0;
+      sound.play();
+
+    });
+
+    document.addEventListener("keydown", (e) => {
+
+      if (e.code === "Space") {
+
+        button.click();
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
