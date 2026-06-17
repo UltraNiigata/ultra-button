@@ -4,13 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>ULTRA NIIGATA CATCH</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;color:#fff;touch-action:none;user-select:none}
 #game{position:relative;width:100vw;height:100dvh;overflow:hidden;background-image:url('BG3.png');background-size:contain; background-color:#000;background-position:center;background-repeat:no-repeat;transition:background-image .8s ease;}
 #game::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.18);z-index:1;pointer-events:none}
 #hud{position:absolute;inset:0;z-index:20;pointer-events:none}
-#scorePanel,#timePanel{position:absolute;transform:translate(-50%,-50%);font-size:clamp(24px,4.2vw,46px);font-weight:900;letter-spacing:.08em;color:#fff;text-shadow:0 3px 0 #000,0 0 12px #000;font-family:monospace;line-height:1}
+#scorePanel,#timePanel{position:absolute;transform:translate(-50%,-50%);font-family:'Press Start 2P',cursive;font-size:clamp(26px,4vw,52px);font-weight:900;letter-spacing:.04em;color:#fff;text-shadow:4px 4px 0 #000,0 0 12px #000;line-height:1;z-index:20}
 #player{position:absolute;bottom:18px;width:140px;height:210px;background-image:url('ultraniigata-man.png');background-size:contain;background-repeat:no-repeat;background-position:center bottom;z-index:10;filter:drop-shadow(0 8px 18px rgba(0,0,0,.65))}
 .item{position:absolute;width:72px;height:72px;border-radius:0;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:900;z-index:9;filter:drop-shadow(0 0 12px rgba(255,255,255,.75));background-size:contain;background-position:center;background-repeat:no-repeat}
 .bomb{filter:drop-shadow(0 0 16px rgba(255,0,0,.9))}.player-hit{filter:brightness(3.4) grayscale(1) drop-shadow(0 0 22px #fff)!important}
@@ -107,8 +108,9 @@ function safePlay(audio){
 }
 
 function playTitleBgm(){
-  if(!gameRunning){
+  if(!gameRunning && startScreen.style.display !== 'none'){
     titleBgm.loop = true;
+    titleBgm.volume = 0.85;
     safePlay(titleBgm);
   }
 }
@@ -292,10 +294,10 @@ function positionHud(){
 
   // 元画像 1536x1152 上の座標
   scorePanel.style.left = (bgX + bgW * (155 / 1536)) + 'px';
-  scorePanel.style.top  = (bgY + bgH * (86 / 1152)) + 'px';
+  scorePanel.style.top  = (bgY + bgH * (98 / 1152)) + 'px';
 
   timePanel.style.left = (bgX + bgW * (1378 / 1536)) + 'px';
-  timePanel.style.top  = (bgY + bgH * (86 / 1152)) + 'px';
+  timePanel.style.top   = (bgY + bgH * (98 / 1152)) + 'px';
 }
 
 function updateBackground(initial){
@@ -391,10 +393,24 @@ window.addEventListener('resize', () => {
 
 positionHud();
 
-// ブラウザの自動再生制限対策：最初の操作後にタイトルBGMを鳴らす
+document.addEventListener('DOMContentLoaded', playTitleBgm);
+
+// ブラウザの自動再生制限対策：操作後にタイトルBGMを鳴らす
 window.addEventListener('pointerdown', () => {
   if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
-},{once:true});
+});
+
+window.addEventListener('click', () => {
+  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
+});
+
+window.addEventListener('touchstart', () => {
+  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
+},{passive:true});
+
+window.addEventListener('keydown', () => {
+  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
+});
 </script>
 </body>
 </html>
