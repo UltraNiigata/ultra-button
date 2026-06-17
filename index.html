@@ -7,37 +7,291 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;color:#fff;touch-action:none;user-select:none}
-#game{position:relative;width:100vw;height:100dvh;overflow:hidden;background-image:url('BG3.png');background-size:contain; background-color:#000;background-position:center;background-repeat:no-repeat;transition:background-image .8s ease;}
-#game::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.18);z-index:1;pointer-events:none}
-#hud{position:absolute;inset:0;z-index:20;pointer-events:none}
-#scorePanel,#timePanel{position:absolute;transform:translate(-50%,-50%);font-family:'Press Start 2P',cursive;font-size:clamp(26px,4vw,52px);font-weight:900;letter-spacing:.04em;color:#fff;text-shadow:4px 4px 0 #000,0 0 12px #000;line-height:1;z-index:20}
-#player{position:absolute;bottom:18px;width:140px;height:210px;background-image:url('ultraniigata-man.png');background-size:contain;background-repeat:no-repeat;background-position:center bottom;z-index:10;filter:drop-shadow(0 8px 18px rgba(0,0,0,.65))}
-.item{position:absolute;width:72px;height:72px;border-radius:0;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:900;z-index:9;filter:drop-shadow(0 0 12px rgba(255,255,255,.75));background-size:contain;background-position:center;background-repeat:no-repeat}
-.bomb{filter:drop-shadow(0 0 16px rgba(255,0,0,.9))}.player-hit{filter:brightness(3.4) grayscale(1) drop-shadow(0 0 22px #fff)!important}
-#message{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(46px,11vw,110px);font-weight:900;color:#fff;text-shadow:0 0 24px #fff,0 5px 20px #000;pointer-events:none;z-index:30;opacity:0;transform:scale(.6)}
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  color:#fff;
+  touch-action:none;
+  user-select:none;
+  font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+}
+#game{
+  position:relative;
+  width:100vw;
+  height:100dvh;
+  overflow:hidden;
+  background-image:url('BG3.png');
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-color:#000;
+  transition:background-image .8s ease;
+}
+#game::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.10);
+  z-index:1;
+  pointer-events:none;
+}
+#hud{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  pointer-events:none;
+}
+#scorePanel,#timePanel{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(26px,4vw,52px);
+  font-weight:900;
+  letter-spacing:.04em;
+  color:#fff;
+  text-shadow:4px 4px 0 #000,0 0 12px #000;
+  line-height:1;
+  z-index:20;
+}
+#player{
+  position:absolute;
+  bottom:18px;
+  width:140px;
+  height:210px;
+  background-image:url('ultraniigata-man.png');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  z-index:10;
+  filter:drop-shadow(0 8px 18px rgba(0,0,0,.65));
+}
+.player-hit{
+  filter:brightness(3.4) grayscale(1) drop-shadow(0 0 22px #fff)!important;
+}
+.item{
+  position:absolute;
+  width:72px;
+  height:72px;
+  border-radius:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:46px;
+  font-weight:900;
+  z-index:9;
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.75));
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.bomb{filter:drop-shadow(0 0 16px rgba(255,0,0,.9))}
+#message{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(32px,8vw,92px);
+  font-weight:900;
+  color:#fff;
+  text-shadow:5px 5px 0 #000,0 0 14px #000;
+  pointer-events:none;
+  z-index:30;
+  opacity:0;
+  transform:scale(.6);
+}
 .show-message{animation:pop .75s ease-out}
-@keyframes pop{0%{opacity:0;transform:scale(.45)}22%{opacity:1;transform:scale(1.18)}100%{opacity:0;transform:scale(1)}}
+@keyframes pop{
+  0%{opacity:0;transform:scale(.45)}
+  22%{opacity:1;transform:scale(1.18)}
+  100%{opacity:0;transform:scale(1)}
+}
 .shake{animation:shake .25s}
-@keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(10px,0)}50%{transform:translate(-10px,0)}75%{transform:translate(8px,0)}100%{transform:translate(0,0)}}
-.flash::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.55);z-index:25;pointer-events:none;animation:flash .45s ease-out}
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(10px,0)}
+  50%{transform:translate(-10px,0)}
+  75%{transform:translate(8px,0)}
+  100%{transform:translate(0,0)}
+}
+.flash::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,.55);
+  z-index:25;
+  pointer-events:none;
+  animation:flash .45s ease-out;
+}
 @keyframes flash{0%{opacity:1}100%{opacity:0}}
-#startScreen,#endScreen{position:absolute;inset:0;z-index:50;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center}
-#titleImage{width:100%;height:100%;object-fit:contain;display:block}
-#endScreen{display:none;flex-direction:column;gap:24px;background:rgba(0,0,0,.86);padding:24px}
-#endScreen h1{font-size:clamp(42px,10vw,96px);font-weight:900;letter-spacing:.08em;text-shadow:0 0 24px #fff}
-#endScreen p{font-size:clamp(26px,6vw,52px);font-weight:900}
-button{font-size:24px;font-weight:900;padding:16px 34px;border:3px solid #fff;background:#000;color:#fff;border-radius:999px;cursor:pointer}
-#touchLeft,#touchRight{position:absolute;top:0;width:50%;height:100%;z-index:15;display:none}
-#touchLeft{left:0}#touchRight{right:0}
-@media (max-width:900px){#player{width:118px;height:178px}.item{width:60px;height:60px;font-size:38px}#touchLeft,#touchRight{display:block}}
+
+#startScreen,#endScreen{
+  position:absolute;
+  inset:0;
+  z-index:50;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  text-align:center;
+}
+#titleImage{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+#nameScreen{
+  position:absolute;
+  inset:0;
+  z-index:60;
+  background:rgba(0,0,0,.78);
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  text-align:center;
+  padding:24px;
+}
+#nameScreen h2{
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(18px,4vw,38px);
+  color:#fff;
+  text-shadow:4px 4px 0 #000,0 0 12px #000;
+  line-height:1.5;
+}
+#playerNameInput{
+  width:min(520px,84vw);
+  padding:18px 20px;
+  border:4px solid #fff;
+  background:#000;
+  color:#fff;
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(16px,3vw,28px);
+  text-align:center;
+  outline:none;
+  border-radius:0;
+  box-shadow:0 0 0 4px #000;
+}
+#romanPreview{
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(12px,2.2vw,22px);
+  color:#fff04a;
+  text-shadow:3px 3px 0 #000;
+  min-height:1.7em;
+}
+#startNameBtn{
+  font-family:'Press Start 2P',cursive;
+  border-radius:0;
+  font-size:clamp(14px,2.6vw,24px);
+  background:#000;
+  color:#ff8ad8;
+  border:4px solid #fff;
+  box-shadow:0 0 0 4px #000;
+  padding:16px 34px;
+  cursor:pointer;
+}
+#finishOverlay{
+  position:absolute;
+  inset:0;
+  z-index:70;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(42px,9vw,120px);
+  color:#fff;
+  text-shadow:6px 6px 0 #000,0 0 18px #000;
+  background:rgba(0,0,0,.18);
+}
+#endScreen{
+  display:none;
+  flex-direction:column;
+  gap:22px;
+  background:rgba(0,0,0,.88);
+  padding:24px;
+  font-family:'Press Start 2P',cursive;
+}
+#endScreen h1{
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(28px,6vw,76px);
+  font-weight:900;
+  letter-spacing:.08em;
+  text-shadow:0 0 24px #fff;
+}
+#endScreen p{
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(14px,3vw,34px);
+  font-weight:900;
+  line-height:1.6;
+}
+#leaderboard{
+  width:min(760px,92vw);
+  max-height:48vh;
+  overflow:auto;
+  text-align:left;
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(11px,2.1vw,21px);
+  line-height:1.85;
+  color:#fff;
+  text-shadow:3px 3px 0 #000;
+}
+#leaderboardTitle{
+  text-align:center;
+  color:#fff04a;
+  margin-bottom:8px;
+}
+.leaderRow{
+  display:grid;
+  grid-template-columns:3.2em 1fr 5.5em;
+  gap:10px;
+  white-space:nowrap;
+}
+button{
+  font-size:24px;
+  font-weight:900;
+  padding:16px 34px;
+  border:3px solid #fff;
+  background:#000;
+  color:#fff;
+  border-radius:999px;
+  cursor:pointer;
+}
+#restartBtn{
+  font-family:'Press Start 2P',cursive;
+  border-radius:0;
+  font-size:clamp(12px,2.2vw,22px);
+}
+#touchLeft,#touchRight{
+  position:absolute;
+  top:0;
+  width:50%;
+  height:100%;
+  z-index:15;
+  display:none;
+}
+#touchLeft{left:0}
+#touchRight{right:0}
+
+@media (max-width:900px){
+  #player{width:118px;height:178px}
+  .item{width:60px;height:60px;font-size:38px}
+  #touchLeft,#touchRight{display:block}
+}
 </style>
 </head>
 <body>
 <div id="game">
   <div id="hud">
     <div id="scorePanel"><span id="score">0</span></div>
-    <div id="timePanel"><span id="time">60</span></div>
+    <div id="timePanel"><span id="time">30</span></div>
   </div>
 
   <div id="player"></div>
@@ -49,10 +303,20 @@ button{font-size:24px;font-weight:900;padding:16px 34px;border:3px solid #fff;ba
     <img src="title.png" id="titleImage" alt="NIIGATA QUEST" />
   </div>
 
+  <div id="nameScreen">
+    <h2>ENTER YOUR NAME</h2>
+    <input id="playerNameInput" maxlength="10" autocomplete="off" placeholder="NAME" />
+    <div id="romanPreview">PLAYER</div>
+    <button id="startNameBtn">START</button>
+  </div>
+
+  <div id="finishOverlay">FINISH!</div>
+
   <div id="endScreen">
-    <h1>FINISH!</h1>
-    <p>SCORE <span id="finalScore">0</span></p>
-    <button id="restartBtn">もう一度</button>
+    <h1>RESULT</h1>
+    <p><span id="resultName">PLAYER</span> / SCORE <span id="finalScore">0</span></p>
+    <div id="leaderboard"></div>
+    <button id="restartBtn">RETRY</button>
   </div>
 </div>
 
@@ -65,8 +329,15 @@ const scorePanel = document.getElementById('scorePanel');
 const timePanel = document.getElementById('timePanel');
 const message = document.getElementById('message');
 const startScreen = document.getElementById('startScreen');
+const nameScreen = document.getElementById('nameScreen');
+const playerNameInput = document.getElementById('playerNameInput');
+const romanPreview = document.getElementById('romanPreview');
+const startNameBtn = document.getElementById('startNameBtn');
+const finishOverlay = document.getElementById('finishOverlay');
 const endScreen = document.getElementById('endScreen');
 const finalScore = document.getElementById('finalScore');
+const resultName = document.getElementById('resultName');
+const leaderboard = document.getElementById('leaderboard');
 const restartBtn = document.getElementById('restartBtn');
 const touchLeft = document.getElementById('touchLeft');
 const touchRight = document.getElementById('touchRight');
@@ -74,14 +345,17 @@ const touchRight = document.getElementById('touchRight');
 const titleBgm = new Audio('UltraNiigata_Man_Title_Theme_loop30.ogg');
 const gameBgm = new Audio('UltraNiigata_Man_Gameplay_Theme_loop120.ogg');
 const victoryFanfare = new Audio('UltraNiigata_Complete_Victory_Fanfare_5s.mp3');
+const resultBgm = new Audio('UltraNiigata_Catch_Result_Screen_loop30.mp3');
 titleBgm.loop = true;
 gameBgm.loop = true;
+resultBgm.loop = true;
 titleBgm.volume = 0.85;
 gameBgm.volume = 0.85;
 victoryFanfare.volume = 1;
+resultBgm.volume = 0.85;
 
 let score = 0;
-let time = 60;
+let time = 30;
 let playerX = window.innerWidth / 2;
 let keys = {};
 let items = [];
@@ -92,19 +366,84 @@ let animationId = null;
 let victoryPlayed = false;
 let bgStage = 1;
 let touchDir = 0;
+let playerName = 'PLAYER';
+
+const LEADERBOARD_KEY = 'ultraNiigataCatchLeaderboardV1';
 
 const itemTypes = [
-  { name:'だんご', image:'item_1.png', point:10, weight:30 },
-  { name:'おにぎり', image:'item_2.png', point:20, weight:25 },
-  { name:'笹団子', image:'item_3.png', point:30, weight:18 },
-  { name:'日本酒', image:'item_4.png', point:40, weight:12 },
-  { name:'錦鯉', image:'item_6.png', point:50, weight:10 },
-  { name:'スペシャル錦鯉', image:'item_5.png', point:100, weight:2, special:true },
-  { name:'爆弾', emoji:'💣', point:-50, weight:3, bomb:true }
+  { name:'ぽっぽ焼', emoji:'🥖', point:10, weight:20 },
+  { name:'苺', emoji:'🍓', point:20, weight:18 },
+  { name:'おにぎり', image:'item_2.png', point:30, weight:16 },
+  { name:'へぎそば', emoji:'🍜', point:40, weight:13 },
+  { name:'日本酒', image:'item_4.png', point:50, weight:11 },
+  { name:'笹団子', image:'item_3.png', point:60, weight:9 },
+  { name:'ラーメン', emoji:'🍜', point:70, weight:7 },
+  { name:'米俵', image:'item_5.png', point:80, weight:5 },
+  { name:'トキ', emoji:'🐦', point:90, weight:3 },
+  { name:'小判', emoji:'🟡', point:100, weight:2 },
+  { name:'爆弾', emoji:'💣', point:-50, weight:10, bomb:true }
 ];
+
+const kanaMap = {
+  'あ':'A','い':'I','う':'U','え':'E','お':'O',
+  'か':'KA','き':'KI','く':'KU','け':'KE','こ':'KO',
+  'さ':'SA','し':'SHI','す':'SU','せ':'SE','そ':'SO',
+  'た':'TA','ち':'CHI','つ':'TSU','て':'TE','と':'TO',
+  'な':'NA','に':'NI','ぬ':'NU','ね':'NE','の':'NO',
+  'は':'HA','ひ':'HI','ふ':'FU','へ':'HE','ほ':'HO',
+  'ま':'MA','み':'MI','む':'MU','め':'ME','も':'MO',
+  'や':'YA','ゆ':'YU','よ':'YO',
+  'ら':'RA','り':'RI','る':'RU','れ':'RE','ろ':'RO',
+  'わ':'WA','を':'O','ん':'N',
+  'が':'GA','ぎ':'GI','ぐ':'GU','げ':'GE','ご':'GO',
+  'ざ':'ZA','じ':'JI','ず':'ZU','ぜ':'ZE','ぞ':'ZO',
+  'だ':'DA','ぢ':'JI','づ':'ZU','で':'DE','ど':'DO',
+  'ば':'BA','び':'BI','ぶ':'BU','べ':'BE','ぼ':'BO',
+  'ぱ':'PA','ぴ':'PI','ぷ':'PU','ぺ':'PE','ぽ':'PO',
+  'ぁ':'A','ぃ':'I','ぅ':'U','ぇ':'E','ぉ':'O',
+  'ゃ':'YA','ゅ':'YU','ょ':'YO',
+  'ア':'A','イ':'I','ウ':'U','エ':'E','オ':'O',
+  'カ':'KA','キ':'KI','ク':'KU','ケ':'KE','コ':'KO',
+  'サ':'SA','シ':'SHI','ス':'SU','セ':'SE','ソ':'SO',
+  'タ':'TA','チ':'CHI','ツ':'TSU','テ':'TE','ト':'TO',
+  'ナ':'NA','ニ':'NI','ヌ':'NU','ネ':'NE','ノ':'NO',
+  'ハ':'HA','ヒ':'HI','フ':'FU','ヘ':'HE','ホ':'HO',
+  'マ':'MA','ミ':'MI','ム':'MU','メ':'ME','モ':'MO',
+  'ヤ':'YA','ユ':'YU','ヨ':'YO',
+  'ラ':'RA','リ':'RI','ル':'RU','レ':'RE','ロ':'RO',
+  'ワ':'WA','ヲ':'O','ン':'N',
+  'ガ':'GA','ギ':'GI','グ':'GU','ゲ':'GE','ゴ':'GO',
+  'ザ':'ZA','ジ':'JI','ズ':'ZU','ゼ':'ZE','ゾ':'ZO',
+  'ダ':'DA','ヂ':'JI','ヅ':'ZU','デ':'DE','ド':'DO',
+  'バ':'BA','ビ':'BI','ブ':'BU','ベ':'BE','ボ':'BO',
+  'パ':'PA','ピ':'PI','プ':'PU','ペ':'PE','ポ':'PO',
+  'ァ':'A','ィ':'I','ゥ':'U','ェ':'E','ォ':'O',
+  'ャ':'YA','ュ':'YU','ョ':'YO'
+};
+
+const nameDictionary = {
+  '山本':'YAMAMOTO',
+  '美紅':'MIKU',
+  'みく':'MIKU',
+  'ミク':'MIKU',
+  '落合':'OCHIAI',
+  '新潟':'NIIGATA',
+  '佐渡':'SADO',
+  '田中':'TANAKA',
+  '佐藤':'SATO',
+  '鈴木':'SUZUKI',
+  '高橋':'TAKAHASHI',
+  '伊藤':'ITO',
+  '渡辺':'WATANABE'
+};
 
 function safePlay(audio){
   audio.play().catch(()=>{});
+}
+
+function stopAudio(audio){
+  audio.pause();
+  audio.currentTime = 0;
 }
 
 function playTitleBgm(){
@@ -115,14 +454,135 @@ function playTitleBgm(){
   }
 }
 
+function stopTitleBgm(){
+  stopAudio(titleBgm);
+}
+
+function toRomaji(input){
+  const raw = (input || '').trim();
+  if(!raw) return 'PLAYER';
+
+  if(nameDictionary[raw]) return nameDictionary[raw];
+
+  let output = '';
+  let smallTsu = false;
+
+  for(let i = 0; i < raw.length; i++){
+    const ch = raw[i];
+
+    if(ch === 'っ' || ch === 'ッ'){
+      smallTsu = true;
+      continue;
+    }
+
+    if(ch === 'ー'){
+      const m = output.match(/[AEIOU](?!.*[AEIOU])/);
+      if(m) output += output[output.length - 1];
+      continue;
+    }
+
+    const two = raw.slice(i, i + 2);
+    const combo = kanaCombo(two);
+    let roma = combo || kanaMap[ch];
+
+    if(combo) i++;
+
+    if(!roma){
+      if(/[a-zA-Z0-9]/.test(ch)){
+        roma = ch.toUpperCase();
+      }else{
+        // 未登録の漢字などは表示を崩さないためスキップ
+        roma = '';
+      }
+    }
+
+    if(smallTsu && roma){
+      roma = roma[0] + roma;
+      smallTsu = false;
+    }
+
+    output += roma;
+  }
+
+  output = output.replace(/[^A-Z0-9]/g, '').slice(0, 10);
+  return output || 'PLAYER';
+}
+
+function kanaCombo(two){
+  const map = {
+    'きゃ':'KYA','きゅ':'KYU','きょ':'KYO','しゃ':'SHA','しゅ':'SHU','しょ':'SHO',
+    'ちゃ':'CHA','ちゅ':'CHU','ちょ':'CHO','にゃ':'NYA','にゅ':'NYU','にょ':'NYO',
+    'ひゃ':'HYA','ひゅ':'HYU','ひょ':'HYO','みゃ':'MYA','みゅ':'MYU','みょ':'MYO',
+    'りゃ':'RYA','りゅ':'RYU','りょ':'RYO','ぎゃ':'GYA','ぎゅ':'GYU','ぎょ':'GYO',
+    'じゃ':'JA','じゅ':'JU','じょ':'JO','びゃ':'BYA','びゅ':'BYU','びょ':'BYO',
+    'ぴゃ':'PYA','ぴゅ':'PYU','ぴょ':'PYO',
+    'キャ':'KYA','キュ':'KYU','キョ':'KYO','シャ':'SHA','シュ':'SHU','ショ':'SHO',
+    'チャ':'CHA','チュ':'CHU','チョ':'CHO','ニャ':'NYA','ニュ':'NYU','ニョ':'NYO',
+    'ヒャ':'HYA','ヒュ':'HYU','ヒョ':'HYO','ミャ':'MYA','ミュ':'MYU','ミョ':'MYO',
+    'リャ':'RYA','リュ':'RYU','リョ':'RYO','ギャ':'GYA','ギュ':'GYU','ギョ':'GYO',
+    'ジャ':'JA','ジュ':'JU','ジョ':'JO','ビャ':'BYA','ビュ':'BYU','ビョ':'BYO',
+    'ピャ':'PYA','ピュ':'PYU','ピョ':'PYO'
+  };
+  return map[two] || null;
+}
+
+function updateRomanPreview(){
+  romanPreview.textContent = toRomaji(playerNameInput.value);
+}
+
+function openNameScreen(){
+  playTitleBgm();
+  startScreen.style.display = 'none';
+  nameScreen.style.display = 'flex';
+  updateRomanPreview();
+  setTimeout(() => playerNameInput.focus(), 50);
+}
+
+function confirmNameAndStart(){
+  playerName = toRomaji(playerNameInput.value);
+  nameScreen.style.display = 'none';
+  startGame();
+}
+
+function getLeaderboard(){
+  try{
+    return JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || '[]');
+  }catch(e){
+    return [];
+  }
+}
+
+function saveScore(){
+  const list = getLeaderboard();
+  list.push({ name:playerName, score:score, date:new Date().toISOString() });
+  list.sort((a,b) => b.score - a.score);
+  localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(list.slice(0, 10)));
+}
+
+function renderLeaderboard(){
+  const list = getLeaderboard();
+  let html = '<div id="leaderboardTitle">BEST 10</div>';
+  if(list.length === 0){
+    html += '<div class="leaderRow"><span>--</span><span>NO DATA</span><span>0</span></div>';
+  }else{
+    list.forEach((row, index) => {
+      const rank = String(index + 1).padStart(2, '0');
+      html += '<div class="leaderRow"><span>' + rank + '</span><span>' + row.name + '</span><span>' + row.score + '</span></div>';
+    });
+  }
+  leaderboard.innerHTML = html;
+}
+
 function startGame(){
   if(gameRunning) return;
 
   startScreen.style.display = 'none';
+  nameScreen.style.display = 'none';
+  finishOverlay.style.display = 'none';
   endScreen.style.display = 'none';
 
   score = 0;
-  time = 60;
+  time = 30;
   victoryPlayed = false;
   bgStage = 1;
   touchDir = 0;
@@ -135,15 +595,16 @@ function startGame(){
 
   playerX = window.innerWidth / 2;
   updatePlayer();
+  positionHud();
 
-  titleBgm.pause();
-  titleBgm.currentTime = 0;
+  stopTitleBgm();
+  stopAudio(resultBgm);
   gameBgm.currentTime = 0;
   gameBgm.volume = 0.85;
   safePlay(gameBgm);
 
   gameRunning = true;
-  spawnTimer = setInterval(spawnItem, 600);
+  spawnTimer = setInterval(spawnItem, 430);
   countdownTimer = setInterval(() => {
     time--;
     timeEl.textContent = time;
@@ -154,23 +615,43 @@ function startGame(){
 }
 
 function endGame(){
+  if(!gameRunning) return;
   gameRunning = false;
   clearInterval(spawnTimer);
   clearInterval(countdownTimer);
   cancelAnimationFrame(animationId);
   touchDir = 0;
 
-  gameBgm.pause();
-  gameBgm.currentTime = 0;
-  victoryFanfare.pause();
-  victoryFanfare.currentTime = 0;
+  stopAudio(gameBgm);
+  stopAudio(victoryFanfare);
 
-  finalScore.textContent = score;
-  endScreen.style.display = 'flex';
+  finishOverlay.style.display = 'flex';
+
+  setTimeout(() => {
+    finishOverlay.style.display = 'none';
+    saveScore();
+    finalScore.textContent = score;
+    resultName.textContent = playerName;
+    renderLeaderboard();
+    endScreen.style.display = 'flex';
+    resultBgm.currentTime = 0;
+    safePlay(resultBgm);
+  }, 1000);
 }
 
 function restartGame(){
-  startGame();
+  endScreen.style.display = 'none';
+  finishOverlay.style.display = 'none';
+  startScreen.style.display = 'flex';
+  playerNameInput.value = '';
+  updateRomanPreview();
+  score = 0;
+  time = 30;
+  scoreEl.textContent = score;
+  timeEl.textContent = time;
+  updateBackground(true);
+  stopAudio(resultBgm);
+  playTitleBgm();
 }
 
 function pickItemType(){
@@ -185,15 +666,18 @@ function pickItemType(){
 
 function spawnItem(){
   if(!gameRunning) return;
-  let type = pickItemType();
 
+  const type = pickItemType();
   const el = document.createElement('div');
   el.className = 'item';
+
   if(type.bomb){
     el.classList.add('bomb');
     el.textContent = type.emoji;
-  }else{
+  }else if(type.image){
     el.style.backgroundImage = "url('" + type.image + "')";
+  }else{
+    el.textContent = type.emoji;
   }
 
   const size = window.innerWidth < 900 ? 60 : 72;
@@ -202,7 +686,7 @@ function spawnItem(){
   el.style.top = '-80px';
   game.appendChild(el);
 
-  items.push({el, x, y:-80, size, speed:3.5 + Math.random() * 3.2, type});
+  items.push({el, x, y:-80, size, speed:3.8 + Math.random() * 3.8, type});
 }
 
 function loop(){
@@ -226,27 +710,29 @@ function updatePlayer(){
 
 function moveItems(){
   const playerRect = player.getBoundingClientRect();
+
   for(let i = items.length - 1; i >= 0; i--){
     const item = items[i];
     item.y += item.speed;
     item.el.style.top = item.y + 'px';
-    const itemRect = item.el.getBoundingClientRect();
 
-    const hit = itemRect.left < playerRect.right &&
-                itemRect.right > playerRect.left &&
-                itemRect.top < playerRect.bottom &&
-                itemRect.bottom > playerRect.top;
+    const itemRect = item.el.getBoundingClientRect();
+    const hit =
+      itemRect.left < playerRect.right &&
+      itemRect.right > playerRect.left &&
+      itemRect.top < playerRect.bottom &&
+      itemRect.bottom > playerRect.top;
 
     if(hit){
       catchItem(item);
       item.el.remove();
-      items.splice(i,1);
+      items.splice(i, 1);
       continue;
     }
 
     if(item.y > window.innerHeight + 100){
       item.el.remove();
-      items.splice(i,1);
+      items.splice(i, 1);
     }
   }
 }
@@ -262,8 +748,6 @@ function catchItem(item){
     player.classList.add('player-hit');
     setTimeout(() => game.classList.remove('shake'), 260);
     setTimeout(() => player.classList.remove('player-hit'), 180);
-  }else if(item.type.special){
-    showMessage('BONUS +' + item.type.point);
   }else{
     showMessage('+' + item.type.point);
   }
@@ -272,42 +756,17 @@ function catchItem(item){
   checkVictoryFanfare();
 }
 
-
-function positionHud(){
-  // 背景画像は4:3でcontain表示。画像内のSCORE/TIME欄に数字を重ねる。
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const bgAspect = 4 / 3;
-
-  let bgW, bgH, bgX, bgY;
-  if(vw / vh > bgAspect){
-    bgH = vh;
-    bgW = vh * bgAspect;
-    bgX = (vw - bgW) / 2;
-    bgY = 0;
-  }else{
-    bgW = vw;
-    bgH = vw / bgAspect;
-    bgX = 0;
-    bgY = (vh - bgH) / 2;
-  }
-
-  // 元画像 1536x1152 上の座標
-  scorePanel.style.left = (bgX + bgW * (155 / 1536)) + 'px';
-  scorePanel.style.top  = (bgY + bgH * (98 / 1152)) + 'px';
-
-  timePanel.style.left = (bgX + bgW * (1378 / 1536)) + 'px';
-  timePanel.style.top   = (bgY + bgH * (98 / 1152)) + 'px';
-}
-
 function updateBackground(initial){
   let nextStage = 1;
   let bg = 'BG3.png';
 
-  if(score >= 2000){
-    nextStage = 3;
+  if(score >= 1000){
+    nextStage = 4;
     bg = 'BG1.png';
-  }else if(score >= 501){
+  }else if(score >= 601){
+    nextStage = 3;
+    bg = 'BG4.png';
+  }else if(score >= 301){
     nextStage = 2;
     bg = 'BG2.png';
   }
@@ -323,7 +782,7 @@ function updateBackground(initial){
 }
 
 function checkVictoryFanfare(){
-  if(score >= 2000 && !victoryPlayed){
+  if(score >= 1000 && !victoryPlayed){
     victoryPlayed = true;
     gameBgm.volume = 0.28;
     victoryFanfare.currentTime = 0;
@@ -341,12 +800,36 @@ function showMessage(text){
   message.classList.add('show-message');
 }
 
+function positionHud(){
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const bgAspect = 4 / 3;
+
+  let bgW, bgH, bgX, bgY;
+  if(vw / vh > bgAspect){
+    bgH = vh;
+    bgW = vh * bgAspect;
+    bgX = (vw - bgW) / 2;
+    bgY = 0;
+  }else{
+    bgW = vw;
+    bgH = vw / bgAspect;
+    bgX = 0;
+    bgY = (vh - bgH) / 2;
+  }
+
+  scorePanel.style.left = (bgX + bgW * (155 / 1536)) + 'px';
+  scorePanel.style.top  = (bgY + bgH * (98 / 1152)) + 'px';
+
+  timePanel.style.left = (bgX + bgW * (1378 / 1536)) + 'px';
+  timePanel.style.top  = (bgY + bgH * (98 / 1152)) + 'px';
+}
+
 startScreen.addEventListener('click', e => {
   const y = e.clientY;
   const h = window.innerHeight;
-  // タイトル画像の下部「GAME START」周辺だけ反応
   if(y > h * 0.64 && y < h * 0.92){
-    startGame();
+    openNameScreen();
   }else{
     playTitleBgm();
   }
@@ -357,17 +840,23 @@ startScreen.addEventListener('touchstart', e => {
   const h = window.innerHeight;
   if(y > h * 0.64 && y < h * 0.92){
     e.preventDefault();
-    startGame();
+    openNameScreen();
   }else{
     playTitleBgm();
   }
 },{passive:false});
 
+playerNameInput.addEventListener('input', updateRomanPreview);
+
 window.addEventListener('keydown', e => {
   keys[e.key] = true;
+
   if(!gameRunning && startScreen.style.display !== 'none' && e.code === 'Space'){
     e.preventDefault();
-    startGame();
+    openNameScreen();
+  }else if(!gameRunning && nameScreen.style.display !== 'none' && e.code === 'Enter'){
+    e.preventDefault();
+    confirmNameAndStart();
   }
 });
 
@@ -383,6 +872,7 @@ touchLeft.addEventListener('mousedown', () => { touchDir = -1; });
 touchRight.addEventListener('mousedown', () => { touchDir = 1; });
 window.addEventListener('mouseup', () => { touchDir = 0; });
 
+startNameBtn.addEventListener('click', confirmNameAndStart);
 restartBtn.addEventListener('click', restartGame);
 
 window.addEventListener('resize', () => {
@@ -391,24 +881,14 @@ window.addEventListener('resize', () => {
   positionHud();
 });
 
-positionHud();
-
-document.addEventListener('DOMContentLoaded', playTitleBgm);
+document.addEventListener('DOMContentLoaded', () => {
+  positionHud();
+  updateRomanPreview();
+  playTitleBgm();
+});
 
 // ブラウザの自動再生制限対策：操作後にタイトルBGMを鳴らす
 window.addEventListener('pointerdown', () => {
-  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
-});
-
-window.addEventListener('click', () => {
-  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
-});
-
-window.addEventListener('touchstart', () => {
-  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
-},{passive:true});
-
-window.addEventListener('keydown', () => {
   if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
 });
 </script>
