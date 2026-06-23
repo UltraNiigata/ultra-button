@@ -345,10 +345,109 @@ button{
   cursor:pointer;
 }
 
+
+#playBar{
+  position:absolute;
+  z-index:19;
+  pointer-events:none;
+  background-image:url('play_bar.png');
+  background-repeat:no-repeat;
+  background-position:top center;
+  background-size:100% auto;
+}
+#scorePanel,#timePanel{
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(14px,2.4vw,30px)!important;
+  color:#fff!important;
+  text-shadow:3px 3px 0 #000,0 0 8px #000!important;
+  z-index:21!important;
+}
+#finishOverlay{
+  position:absolute!important;
+  inset:0!important;
+  z-index:70!important;
+  display:none;
+  align-items:center!important;
+  justify-content:center!important;
+  pointer-events:none!important;
+  background:transparent!important;
+}
+#finishOverlay img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  display:block!important;
+}
+#endScreen{
+  position:absolute!important;
+  inset:0!important;
+  z-index:80!important;
+  display:none;
+  align-items:center!important;
+  justify-content:center!important;
+  background:#000!important;
+  padding:0!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+}
+#resultImage{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  display:block!important;
+  pointer-events:none!important;
+}
+#resultContent{
+  position:absolute!important;
+  z-index:82!important;
+  font-family:'Press Start 2P',cursive!important;
+  color:#fff!important;
+  text-shadow:4px 4px 0 #000,0 0 8px #000!important;
+  text-align:left!important;
+  line-height:1.8!important;
+}
+#resultScore{
+  font-size:clamp(9px,1.45vw,17px)!important;
+  margin-bottom:8px!important;
+  white-space:nowrap!important;
+}
+#leaderboard{
+  width:100%!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(7px,1.05vw,13px)!important;
+  line-height:1.75!important;
+}
+#leaderboardTitle{
+  color:#fff04a!important;
+  margin-bottom:6px!important;
+}
+.leaderRow{
+  display:grid!important;
+  grid-template-columns:2.8em 1fr 4.8em!important;
+  gap:8px!important;
+  white-space:nowrap!important;
+}
+#restartBtn{
+  position:absolute!important;
+  z-index:83!important;
+  font-family:'Press Start 2P',cursive!important;
+  border-radius:0!important;
+  font-size:clamp(10px,1.7vw,18px)!important;
+  padding:10px 18px!important;
+  border:3px solid #fff!important;
+  background:#000!important;
+  color:#ff8ad8!important;
+  box-shadow:0 0 0 3px #000!important;
+  cursor:pointer!important;
+}
+
 </style>
 </head>
 <body>
 <div id="game">
+  <div id="playBar"></div>
   <div id="hud">
     <div id="scorePanel"><span id="score">0</span></div>
     <div id="timePanel"><span id="time">30</span></div>
@@ -384,6 +483,7 @@ button{
 
 <script>
 const game = document.getElementById('game');
+const playBar = document.getElementById('playBar');
 const player = document.getElementById('player');
 const scoreEl = document.getElementById('score');
 const timeEl = document.getElementById('time');
@@ -908,15 +1008,31 @@ function containRect(aspect){
   return {x,y,w,h};
 }
 
+function positionHud(){
+  const r = containRect(4 / 3);
+
+  playBar.style.left = r.x + 'px';
+  playBar.style.top = r.y + 'px';
+  playBar.style.width = r.w + 'px';
+  playBar.style.height = (r.h * (60 / 480)) + 'px';
+
+  scorePanel.style.left = (r.x + r.w * (65 / 640)) + 'px';
+  scorePanel.style.top  = (r.y + r.h * (43 / 480)) + 'px';
+
+  timePanel.style.left = (r.x + r.w * (590 / 640)) + 'px';
+  timePanel.style.top  = (r.y + r.h * (43 / 480)) + 'px';
+}
+
 function positionResultContent(){
   const r = containRect(4 / 3);
-  resultContent.style.left = (r.x + r.w * (178 / 640)) + 'px';
+
+  resultContent.style.left = (r.x + r.w * (175 / 640)) + 'px';
   resultContent.style.top = (r.y + r.h * (190 / 480)) + 'px';
-  resultContent.style.width = (r.w * (285 / 640)) + 'px';
-  resultContent.style.height = (r.h * (155 / 480)) + 'px';
+  resultContent.style.width = (r.w * (290 / 640)) + 'px';
+  resultContent.style.height = (r.h * (165 / 480)) + 'px';
 
   restartBtn.style.left = (r.x + r.w * (320 / 640)) + 'px';
-  restartBtn.style.top = (r.y + r.h * (395 / 480)) + 'px';
+  restartBtn.style.top = (r.y + r.h * (390 / 480)) + 'px';
   restartBtn.style.transform = 'translate(-50%,-50%)';
 }
 
