@@ -250,12 +250,15 @@ html,body{
   color:#fff04a;
   margin-bottom:8px;
 }
+,
 .leaderRow{
-  display:grid;
-  grid-template-columns:3.2em 1fr 5.5em;
-  gap:10px;
-  white-space:nowrap;
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
 }
+
 button{
   font-size:24px;
   font-weight:900;
@@ -325,12 +328,15 @@ button{
   color:#fff04a;
   margin-bottom:6px;
 }
+,
 .leaderRow{
-  display:grid;
-  grid-template-columns:2.8em 1fr 4.8em;
-  gap:8px;
-  white-space:nowrap;
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
 }
+
 #restartBtn{
   position:absolute;
   z-index:83;
@@ -408,7 +414,7 @@ button{
 }
 #resultScore{
   font-size:clamp(9px,1.45vw,17px)!important;
-  margin-bottom:8px!important;
+  margin-bottom:2.8em!important;
   white-space:nowrap!important;
 }
 #leaderboard{
@@ -423,12 +429,15 @@ button{
   color:#fff04a!important;
   margin-bottom:6px!important;
 }
+,
 .leaderRow{
-  display:grid!important;
-  grid-template-columns:2.8em 1fr 4.8em!important;
-  gap:8px!important;
-  white-space:nowrap!important;
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
 }
+
 #restartBtn{
   position:absolute!important;
   z-index:83!important;
@@ -484,7 +493,7 @@ button{
 }
 #resultScore{
   font-size:clamp(8px,1.25vw,14px)!important;
-  margin-bottom:4px!important;
+  margin-bottom:2.8em!important;
   white-space:nowrap!important;
 }
 #leaderboard{
@@ -494,10 +503,15 @@ button{
 #leaderboardTitle{
   margin-bottom:3px!important;
 }
+,
 .leaderRow{
-  grid-template-columns:2.6em 1fr 4.5em!important;
-  gap:6px!important;
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
 }
+
 #restartBtn{
   font-size:clamp(9px,1.5vw,16px)!important;
 }
@@ -584,6 +598,162 @@ button{
 }
 #endScreen{
   z-index:80!important;
+}
+
+
+/* RESULT CENTER FIX */
+#resultContent{
+  text-align:center!important;
+}
+#resultScore{
+  text-align:center!important;
+}
+#leaderboardTitle{
+  text-align:center!important;
+}
+,
+.leaderRow{
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
+}
+
+
+
+/* ===== FINAL CLEAN FIX ===== */
+
+/* タイトルは黒背景で、ゲーム中キャラを見せない */
+#startScreen{
+  background:#000!important;
+  z-index:60!important;
+}
+
+/* ゲーム中：上下バーを常時表示 */
+#playBar{
+  position:absolute!important;
+  left:0!important;
+  top:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:18!important;
+  pointer-events:none!important;
+  background-image:url('play_bar(3).png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+  display:block!important;
+}
+
+#hud{z-index:22!important}
+#scorePanel,#timePanel{
+  z-index:23!important;
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(14px,2.3vw,28px)!important;
+  color:#fff!important;
+  text-shadow:3px 3px 0 #000,0 0 8px #000!important;
+}
+
+#player{
+  z-index:21!important;
+  bottom:auto!important;
+}
+.item{z-index:17!important}
+
+/* FINISHはゲーム画面上に重ねる */
+#finishOverlay{
+  background:transparent!important;
+  z-index:75!important;
+}
+#finishOverlay img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+}
+
+/* RESULTはゲーム終了時の画面の上に重ねる */
+#endScreen{
+  position:absolute!important;
+  inset:0!important;
+  z-index:80!important;
+  display:none;
+  align-items:center!important;
+  justify-content:center!important;
+  background:transparent!important;
+  padding:0!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+}
+
+#resultImage{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  display:block!important;
+  pointer-events:none!important;
+}
+
+#resultContent{
+  position:absolute!important;
+  z-index:82!important;
+  font-family:'Press Start 2P',cursive!important;
+  color:#fff!important;
+  text-shadow:4px 4px 0 #000,0 0 8px #000!important;
+  text-align:center!important;
+  line-height:1.35!important;
+}
+
+#resultScore{
+  text-align:center!important;
+  font-size:clamp(8px,1.25vw,14px)!important;
+  margin-bottom:2.8em!important;
+  white-space:nowrap!important;
+}
+
+#leaderboard{
+  width:100%!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(6px,0.92vw,11px)!important;
+  line-height:1.45!important;
+  color:#fff!important;
+  text-shadow:3px 3px 0 #000!important;
+}
+
+#leaderboardTitle{
+  color:#fff04a!important;
+  margin-bottom:4px!important;
+  text-align:center!important;
+}
+
+/* BEST10：中央に表示し、名前とスコアの間に適度なスペース */
+.leaderRow{
+  display:grid!important;
+  grid-template-columns:50px 1fr 80px!important;
+  width:60%!important;
+  margin:0 auto!important;
+  column-gap:16px!important;
+  align-items:center!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+}
+
+.leaderRow span:nth-child(1){
+  text-align:left!important;
+}
+
+.leaderRow span:nth-child(2){
+  text-align:left!important;
+}
+
+.leaderRow span:nth-child(3){
+  text-align:right!important;
+}
+
+#restartBtn{
+  display:none!important;
 }
 
 </style>
@@ -753,6 +923,27 @@ function stopAudio(audio){
   audio.currentTime = 0;
 }
 
+let audioUnlocked = false;
+
+function unlockAudio(){
+  if(audioUnlocked) return;
+  audioUnlocked = true;
+
+  [titleBgm, gameBgm, victoryFanfare, resultBgm].forEach(audio => {
+    const oldVolume = audio.volume;
+    audio.muted = true;
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.muted = false;
+      audio.volume = oldVolume;
+    }).catch(() => {
+      audio.muted = false;
+      audio.volume = oldVolume;
+    });
+  });
+}
+
 function playTitleBgm(){
   if(!gameRunning && startScreen.style.display !== 'none'){
     titleBgm.loop = true;
@@ -838,6 +1029,7 @@ function updateRomanPreview(){
 }
 
 function openNameScreen(){
+  unlockAudio();
   playTitleBgm();
   startScreen.style.display = 'none';
   nameScreen.style.display = 'flex';
@@ -881,6 +1073,7 @@ function renderLeaderboard(){
 }
 
 function startGame(){
+  unlockAudio();
   if(gameRunning) return;
 
   startScreen.style.display = 'none';
@@ -1170,10 +1363,10 @@ function positionHud(){
 function positionResultContent(){
   const r = containRect(4 / 3);
 
-  // result.png の黄色枠内、RESULTロゴの下に収める
-  resultContent.style.left = (r.x + r.w * (150 / 640)) + 'px';
+  // 黄色枠内の中央。RESULTロゴ下から下枠内に収める。
+  resultContent.style.left = (r.x + r.w * (110 / 640)) + 'px';
   resultContent.style.top = (r.y + r.h * (155 / 480)) + 'px';
-  resultContent.style.width = (r.w * (340 / 640)) + 'px';
+  resultContent.style.width = (r.w * (420 / 640)) + 'px';
   resultContent.style.height = (r.h * (245 / 480)) + 'px';
 
   restartBtn.style.left = (r.x + r.w * (320 / 640)) + 'px';
@@ -1182,6 +1375,7 @@ function positionResultContent(){
 }
 
 startScreen.addEventListener('click', e => {
+  unlockAudio();
   const y = e.clientY;
   const h = window.innerHeight;
   if(y > h * 0.64 && y < h * 0.92){
@@ -1192,6 +1386,7 @@ startScreen.addEventListener('click', e => {
 });
 
 startScreen.addEventListener('touchstart', e => {
+  unlockAudio();
   const y = e.touches[0].clientY;
   const h = window.innerHeight;
   if(y > h * 0.64 && y < h * 0.92){
@@ -1205,6 +1400,7 @@ startScreen.addEventListener('touchstart', e => {
 playerNameInput.addEventListener('input', updateRomanPreview);
 
 window.addEventListener('keydown', e => {
+  unlockAudio();
   keys[e.key] = true;
 
   if(!gameRunning && endScreen.style.display !== 'none' && e.code === 'Space'){
@@ -1231,8 +1427,8 @@ touchLeft.addEventListener('mousedown', () => { touchDir = -1; });
 touchRight.addEventListener('mousedown', () => { touchDir = 1; });
 window.addEventListener('mouseup', () => { touchDir = 0; });
 
-startNameBtn.addEventListener('click', confirmNameAndStart);
-restartBtn.addEventListener('click', restartGame);
+startNameBtn.addEventListener('click', () => { unlockAudio(); confirmNameAndStart(); });
+restartBtn.addEventListener('click', () => { unlockAudio(); restartGame(); });
 endScreen.addEventListener('click', restartGame);
 
 window.addEventListener('resize', () => {
@@ -1251,8 +1447,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ブラウザの自動再生制限対策：操作後にタイトルBGMを鳴らす
 window.addEventListener('pointerdown', () => {
+  unlockAudio();
   if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
 });
+
+window.addEventListener('touchend', () => {
+  unlockAudio();
+  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
+},{passive:true});
 </script>
 </body>
 </html>
