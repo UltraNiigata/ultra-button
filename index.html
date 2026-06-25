@@ -8,130 +8,759 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
-  width:100%;height:100%;overflow:hidden;background:#000;color:#fff;
-  touch-action:none;user-select:none;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  color:#fff;
+  touch-action:none;
+  user-select:none;
   font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
 }
 #game{
-  position:relative;width:100vw;height:100dvh;overflow:hidden;
+  position:relative;
+  width:100vw;
+  height:100dvh;
+  overflow:hidden;
   background-image:url('BG3.png');
-  background-size:contain;background-position:center;background-repeat:no-repeat;background-color:#000;
-  transition:background-image .45s ease;
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-color:#000;
+  transition:background-image .8s ease;
 }
-#game::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.08);z-index:1;pointer-events:none}
-#playBar{
-  position:absolute;left:0;top:0;width:100%;height:100%;
-  z-index:18;pointer-events:none;
-  background-image:url('play_bar(3).png');
-  background-size:contain;background-position:center;background-repeat:no-repeat;
+#game::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.10);
+  z-index:1;
+  pointer-events:none;
 }
-#hud{position:absolute;inset:0;z-index:22;pointer-events:none}
+#hud{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  pointer-events:none;
+}
 #scorePanel,#timePanel{
-  position:absolute;transform:translate(-50%,-50%);
-  font-family:'Press Start 2P',cursive;font-size:clamp(14px,2.3vw,28px);
-  color:#fff;text-shadow:3px 3px 0 #000,0 0 8px #000;
-  line-height:1;z-index:23;
+  position:absolute;
+  transform:translate(-50%,-50%);
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(26px,4vw,52px);
+  font-weight:900;
+  letter-spacing:.04em;
+  color:#fff;
+  text-shadow:4px 4px 0 #000,0 0 12px #000;
+  line-height:1;
+  z-index:20;
 }
 #player{
-  position:absolute;width:140px;height:210px;z-index:21;
+  position:absolute;
+  bottom:18px;
+  width:140px;
+  height:210px;
   background-image:url('ultraniigata-man.png');
-  background-size:contain;background-repeat:no-repeat;background-position:center bottom;
-  filter:drop-shadow(0 8px 14px rgba(0,0,0,.55));
-  will-change:transform,filter;
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  z-index:10;
+  filter:drop-shadow(0 8px 18px rgba(0,0,0,.65));
 }
-.player-hit{filter:brightness(3.2) grayscale(1) drop-shadow(0 0 18px #fff)!important}
+.player-hit{
+  filter:brightness(3.4) grayscale(1) drop-shadow(0 0 22px #fff)!important;
+}
 .item{
-  position:absolute;width:68px;height:68px;z-index:17;
-  background-size:contain;background-repeat:no-repeat;background-position:center;
-  display:flex;align-items:center;justify-content:center;
-  font-size:42px;
-  filter:drop-shadow(0 0 8px rgba(255,255,255,.6));
-  will-change:transform;
+  position:absolute;
+  width:72px;
+  height:72px;
+  border-radius:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:46px;
+  font-weight:900;
+  z-index:9;
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.75));
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
 }
-.bomb{filter:drop-shadow(0 0 12px rgba(255,0,0,.9))}
+.bomb{filter:drop-shadow(0 0 16px rgba(255,0,0,.9))}
 #message{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:'Press Start 2P',cursive;font-size:clamp(28px,7vw,84px);
-  color:#fff;text-shadow:5px 5px 0 #000,0 0 12px #000;
-  pointer-events:none;z-index:30;opacity:0;transform:scale(.6);
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(32px,8vw,92px);
+  font-weight:900;
+  color:#fff;
+  text-shadow:5px 5px 0 #000,0 0 14px #000;
+  pointer-events:none;
+  z-index:30;
+  opacity:0;
+  transform:scale(.6);
 }
-.show-message{animation:pop .65s ease-out}
-@keyframes pop{0%{opacity:0;transform:scale(.45)}25%{opacity:1;transform:scale(1.12)}100%{opacity:0;transform:scale(1)}}
-.shake{animation:shake .22s}
-@keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(8px,0)}50%{transform:translate(-8px,0)}75%{transform:translate(6px,0)}100%{transform:translate(0,0)}}
-.flash::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.42);z-index:25;pointer-events:none;animation:flash .35s ease-out}
+.show-message{animation:pop .75s ease-out}
+@keyframes pop{
+  0%{opacity:0;transform:scale(.45)}
+  22%{opacity:1;transform:scale(1.18)}
+  100%{opacity:0;transform:scale(1)}
+}
+.shake{animation:shake .25s}
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(10px,0)}
+  50%{transform:translate(-10px,0)}
+  75%{transform:translate(8px,0)}
+  100%{transform:translate(0,0)}
+}
+.flash::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,.55);
+  z-index:25;
+  pointer-events:none;
+  animation:flash .45s ease-out;
+}
 @keyframes flash{0%{opacity:1}100%{opacity:0}}
 
-#startScreen{
-  position:absolute;inset:0;z-index:60;background:#000;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;
+#startScreen,#endScreen{
+  position:absolute;
+  inset:0;
+  z-index:50;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  text-align:center;
 }
-#titleImage{width:100%;height:100%;object-fit:contain;display:block}
-
+#titleImage{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
 #nameScreen{
-  position:absolute;inset:0;z-index:70;background:rgba(0,0,0,.78);
-  display:none;flex-direction:column;align-items:center;justify-content:center;
-  gap:18px;text-align:center;padding:24px;
+  position:absolute;
+  inset:0;
+  z-index:60;
+  background:rgba(0,0,0,.78);
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  text-align:center;
+  padding:24px;
 }
-#nameScreen h2,#nameDisplay,#romanPreview,#startNameBtn{
-  font-family:'Press Start 2P',cursive;text-shadow:4px 4px 0 #000,0 0 10px #000;
+#nameScreen h2{
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(18px,4vw,38px);
+  color:#fff;
+  text-shadow:4px 4px 0 #000,0 0 12px #000;
+  line-height:1.5;
 }
-#nameScreen h2{font-size:clamp(18px,4vw,38px);line-height:1.5}
-#nameDisplay{
-  width:min(520px,84vw);min-height:72px;padding:18px 20px;
-  border:4px solid #fff;box-shadow:0 0 0 4px #000;background:#000;
-  color:#fff;font-size:clamp(16px,3vw,28px);display:flex;align-items:center;justify-content:center;
+#playerNameInput{
+  width:min(520px,84vw);
+  padding:18px 20px;
+  border:4px solid #fff;
+  background:#000;
+  color:#fff;
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(16px,3vw,28px);
+  text-align:center;
+  outline:none;
+  border-radius:0;
+  box-shadow:0 0 0 4px #000;
 }
-#nameDisplay.empty::before{content:"NAME";color:rgba(255,255,255,.45)}
-#romanPreview{font-size:clamp(12px,2.2vw,22px);color:#fff04a;min-height:1.7em}
+#romanPreview{
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(12px,2.2vw,22px);
+  color:#fff04a;
+  text-shadow:3px 3px 0 #000;
+  min-height:1.7em;
+}
 #startNameBtn{
-  border-radius:0;font-size:clamp(14px,2.6vw,24px);
-  background:#000;color:#ff8ad8;border:4px solid #fff;box-shadow:0 0 0 4px #000;
-  padding:16px 34px;cursor:pointer;
+  font-family:'Press Start 2P',cursive;
+  border-radius:0;
+  font-size:clamp(14px,2.6vw,24px);
+  background:#000;
+  color:#ff8ad8;
+  border:4px solid #fff;
+  box-shadow:0 0 0 4px #000;
+  padding:16px 34px;
+  cursor:pointer;
 }
-
 #finishOverlay{
-  position:absolute;inset:0;z-index:75;display:none;align-items:center;justify-content:center;
-  pointer-events:none;background:transparent;
+  position:absolute;
+  inset:0;
+  z-index:70;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  background:transparent;
 }
-#finishOverlay img{width:100%;height:100%;object-fit:contain;display:block}
-
+#finishOverlay img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
 #endScreen{
-  position:absolute;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
-  background:transparent;overflow:hidden;font-family:'Press Start 2P',cursive;
+  display:none;
+  flex-direction:column;
+  gap:22px;
+  background:rgba(0,0,0,.88);
+  padding:24px;
+  font-family:'Press Start 2P',cursive;
 }
-#resultImage{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
-#resultContent{
-  position:absolute;z-index:82;color:#fff;text-shadow:4px 4px 0 #000,0 0 8px #000;
-  text-align:center;line-height:1.35;font-family:'Press Start 2P',cursive;
+#endScreen h1{
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(28px,6vw,76px);
+  font-weight:900;
+  letter-spacing:.08em;
+  text-shadow:0 0 24px #fff;
 }
-#resultScore{font-size:clamp(8px,1.25vw,14px);margin-bottom:2.8em;white-space:nowrap}
+#endScreen p{
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(14px,3vw,34px);
+  font-weight:900;
+  line-height:1.6;
+}
 #leaderboard{
-  width:100%;overflow:hidden;font-size:clamp(6px,.92vw,11px);line-height:1.45;
-  color:#fff;text-shadow:3px 3px 0 #000;
+  width:min(760px,92vw);
+  max-height:48vh;
+  overflow:auto;
+  text-align:left;
+  font-family:'Press Start 2P',cursive;
+  font-size:clamp(11px,2.1vw,21px);
+  line-height:1.85;
+  color:#fff;
+  text-shadow:3px 3px 0 #000;
 }
-#leaderboardTitle{color:#fff04a;margin-bottom:4px;text-align:center}
+#leaderboardTitle{
+  text-align:center;
+  color:#fff04a;
+  margin-bottom:8px;
+}
+,
 .leaderRow{
-  display:grid;grid-template-columns:50px 1fr 80px;width:60%;margin:0 auto;
-  column-gap:16px;align-items:center;text-align:left;white-space:nowrap;
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
 }
-.leaderRow span:nth-child(1){text-align:left}
-.leaderRow span:nth-child(2){text-align:left}
-.leaderRow span:nth-child(3){text-align:right}
 
-#touchLeft,#touchRight{position:absolute;top:0;width:50%;height:100%;z-index:15;display:none}
-#touchLeft{left:0}#touchRight{right:0}
+button{
+  font-size:24px;
+  font-weight:900;
+  padding:16px 34px;
+  border:3px solid #fff;
+  background:#000;
+  color:#fff;
+  border-radius:999px;
+  cursor:pointer;
+}
+#restartBtn{
+  font-family:'Press Start 2P',cursive;
+  border-radius:0;
+  font-size:clamp(12px,2.2vw,22px);
+}
+#touchLeft,#touchRight{
+  position:absolute;
+  top:0;
+  width:50%;
+  height:100%;
+  z-index:15;
+  display:none;
+}
+#touchLeft{left:0}
+#touchRight{right:0}
+
 @media (max-width:900px){
   #player{width:118px;height:178px}
-  .item{width:58px;height:58px;font-size:36px}
+  .item{width:60px;height:60px;font-size:38px}
   #touchLeft,#touchRight{display:block}
 }
+
+#endScreen{
+  background:#000!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+#resultImage{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+#resultContent{
+  position:absolute;
+  z-index:82;
+  font-family:'Press Start 2P',cursive;
+  color:#fff;
+  text-shadow:4px 4px 0 #000,0 0 8px #000;
+  text-align:left;
+  line-height:1.8;
+}
+#resultScore{
+  font-size:clamp(10px,1.8vw,20px);
+  margin-bottom:10px;
+  white-space:nowrap;
+}
+#leaderboard{
+  width:100%!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(7px,1.25vw,14px)!important;
+  line-height:1.9!important;
+}
+#leaderboardTitle{
+  color:#fff04a;
+  margin-bottom:6px;
+}
+,
+.leaderRow{
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
+}
+
+#restartBtn{
+  position:absolute;
+  z-index:83;
+  font-family:'Press Start 2P',cursive!important;
+  border-radius:0!important;
+  font-size:clamp(10px,1.7vw,18px)!important;
+  padding:10px 18px!important;
+  border:3px solid #fff!important;
+  background:#000!important;
+  color:#ff8ad8!important;
+  box-shadow:0 0 0 3px #000!important;
+  cursor:pointer;
+}
+
+
+#playBar{
+  position:absolute;
+  z-index:19;
+  pointer-events:none;
+  background-image:url('play_bar(3).png');
+  background-repeat:no-repeat;
+  background-position:top center;
+  background-size:100% auto;
+}
+#scorePanel,#timePanel{
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(14px,2.4vw,30px)!important;
+  color:#fff!important;
+  text-shadow:3px 3px 0 #000,0 0 8px #000!important;
+  z-index:21!important;
+}
+#finishOverlay{
+  position:absolute!important;
+  inset:0!important;
+  z-index:70!important;
+  display:none;
+  align-items:center!important;
+  justify-content:center!important;
+  pointer-events:none!important;
+  background:transparent!important;
+}
+#finishOverlay img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  display:block!important;
+}
+#endScreen{
+  position:absolute!important;
+  inset:0!important;
+  z-index:80!important;
+  display:none;
+  align-items:center!important;
+  justify-content:center!important;
+  background:#000!important;
+  padding:0!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+}
+#resultImage{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  display:block!important;
+  pointer-events:none!important;
+}
+#resultContent{
+  position:absolute!important;
+  z-index:82!important;
+  font-family:'Press Start 2P',cursive!important;
+  color:#fff!important;
+  text-shadow:4px 4px 0 #000,0 0 8px #000!important;
+  text-align:left!important;
+  line-height:1.8!important;
+}
+#resultScore{
+  font-size:clamp(9px,1.45vw,17px)!important;
+  margin-bottom:2.8em!important;
+  white-space:nowrap!important;
+}
+#leaderboard{
+  width:100%!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(7px,1.05vw,13px)!important;
+  line-height:1.75!important;
+}
+#leaderboardTitle{
+  color:#fff04a!important;
+  margin-bottom:6px!important;
+}
+,
+.leaderRow{
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
+}
+
+#restartBtn{
+  position:absolute!important;
+  z-index:83!important;
+  font-family:'Press Start 2P',cursive!important;
+  border-radius:0!important;
+  font-size:clamp(10px,1.7vw,18px)!important;
+  padding:10px 18px!important;
+  border:3px solid #fff!important;
+  background:#000!important;
+  color:#ff8ad8!important;
+  box-shadow:0 0 0 3px #000!important;
+  cursor:pointer!important;
+}
+
+
+#playBar{
+  position:absolute!important;
+  z-index:18!important;
+  pointer-events:none!important;
+  background-image:url('play_bar(3).png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:100% 100%!important;
+}
+#player{
+  z-index:21!important;
+  bottom:auto!important;
+}
+.item{
+  z-index:17!important;
+}
+#hud{
+  z-index:22!important;
+}
+#scorePanel,#timePanel{
+  z-index:23!important;
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(14px,2.3vw,28px)!important;
+  color:#fff!important;
+  text-shadow:3px 3px 0 #000,0 0 8px #000!important;
+}
+#startScreen{
+  background:transparent!important;
+}
+#endScreen{
+  background:transparent!important;
+}
+#finishOverlay{
+  background:transparent!important;
+}
+#resultContent{
+  line-height:1.35!important;
+}
+#resultScore{
+  font-size:clamp(8px,1.25vw,14px)!important;
+  margin-bottom:2.8em!important;
+  white-space:nowrap!important;
+}
+#leaderboard{
+  font-size:clamp(6px,0.92vw,11px)!important;
+  line-height:1.45!important;
+}
+#leaderboardTitle{
+  margin-bottom:3px!important;
+}
+,
+.leaderRow{
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
+}
+
+#restartBtn{
+  font-size:clamp(9px,1.5vw,16px)!important;
+}
+
+
+/* FINAL OVERRIDES */
+#startScreen{
+  background:#000!important;
+  z-index:60!important;
+}
+#nameScreen{
+  z-index:70!important;
+}
+#playBar{
+  position:absolute!important;
+  inset:auto!important;
+  z-index:18!important;
+  pointer-events:none!important;
+  background-image:url('play_bar(3).png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:100% 100%!important;
+}
+#player{
+  z-index:21!important;
+  bottom:auto!important;
+}
+.item{
+  z-index:17!important;
+}
+#hud{
+  z-index:22!important;
+}
+#scorePanel,#timePanel{
+  z-index:23!important;
+}
+#endScreen{
+  background:transparent!important;
+}
+#restartBtn{
+  display:none!important;
+}
+
+
+/* PLAY BAR FIX */
+#playBar{
+  position:absolute!important;
+  left:0!important;
+  top:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:18!important;
+  pointer-events:none!important;
+  background-image:url('play_bar(3).png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+  display:block!important;
+}
+#game::before{
+  z-index:1!important;
+}
+.item{
+  z-index:17!important;
+}
+#player{
+  z-index:21!important;
+}
+#hud{
+  z-index:22!important;
+}
+#scorePanel,#timePanel{
+  z-index:23!important;
+}
+#startScreen{
+  z-index:60!important;
+  background:#000!important;
+}
+#nameScreen{
+  z-index:70!important;
+}
+#finishOverlay{
+  z-index:75!important;
+}
+#endScreen{
+  z-index:80!important;
+}
+
+
+/* RESULT CENTER FIX */
+#resultContent{
+  text-align:center!important;
+}
+#resultScore{
+  text-align:center!important;
+}
+#leaderboardTitle{
+  text-align:center!important;
+}
+,
+.leaderRow{
+  display:grid !important;
+  grid-template-columns:2.8em 1fr 4.0em !important;
+  column-gap:12px !important;
+  width:80% !important;
+  margin:0 auto !important;
+}
+
+
+
+/* ===== FINAL CLEAN FIX ===== */
+
+/* タイトルは黒背景で、ゲーム中キャラを見せない */
+#startScreen{
+  background:#000!important;
+  z-index:60!important;
+}
+
+/* ゲーム中：上下バーを常時表示 */
+#playBar{
+  position:absolute!important;
+  left:0!important;
+  top:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:18!important;
+  pointer-events:none!important;
+  background-image:url('play_bar(3).png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+  display:block!important;
+}
+
+#hud{z-index:22!important}
+#scorePanel,#timePanel{
+  z-index:23!important;
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(14px,2.3vw,28px)!important;
+  color:#fff!important;
+  text-shadow:3px 3px 0 #000,0 0 8px #000!important;
+}
+
+#player{
+  z-index:21!important;
+  bottom:auto!important;
+}
+.item{z-index:17!important}
+
+/* FINISHはゲーム画面上に重ねる */
+#finishOverlay{
+  background:transparent!important;
+  z-index:75!important;
+}
+#finishOverlay img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+}
+
+/* RESULTはゲーム終了時の画面の上に重ねる */
+#endScreen{
+  position:absolute!important;
+  inset:0!important;
+  z-index:80!important;
+  display:none;
+  align-items:center!important;
+  justify-content:center!important;
+  background:transparent!important;
+  padding:0!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+}
+
+#resultImage{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  display:block!important;
+  pointer-events:none!important;
+}
+
+#resultContent{
+  position:absolute!important;
+  z-index:82!important;
+  font-family:'Press Start 2P',cursive!important;
+  color:#fff!important;
+  text-shadow:4px 4px 0 #000,0 0 8px #000!important;
+  text-align:center!important;
+  line-height:1.35!important;
+}
+
+#resultScore{
+  text-align:center!important;
+  font-size:clamp(8px,1.25vw,14px)!important;
+  margin-bottom:2.8em!important;
+  white-space:nowrap!important;
+}
+
+#leaderboard{
+  width:100%!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  font-family:'Press Start 2P',cursive!important;
+  font-size:clamp(6px,0.92vw,11px)!important;
+  line-height:1.45!important;
+  color:#fff!important;
+  text-shadow:3px 3px 0 #000!important;
+}
+
+#leaderboardTitle{
+  color:#fff04a!important;
+  margin-bottom:4px!important;
+  text-align:center!important;
+}
+
+/* BEST10：中央に表示し、名前とスコアの間に適度なスペース */
+.leaderRow{
+  display:grid!important;
+  grid-template-columns:50px 1fr 80px!important;
+  width:60%!important;
+  margin:0 auto!important;
+  column-gap:16px!important;
+  align-items:center!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+}
+
+.leaderRow span:nth-child(1){
+  text-align:left!important;
+}
+
+.leaderRow span:nth-child(2){
+  text-align:left!important;
+}
+
+.leaderRow span:nth-child(3){
+  text-align:right!important;
+}
+
+#restartBtn{
+  display:none!important;
+}
+
 </style>
 </head>
 <body>
 <div id="game">
   <div id="playBar"></div>
-
   <div id="hud">
     <div id="scorePanel"><span id="score">0</span></div>
     <div id="timePanel"><span id="time">30</span></div>
@@ -148,7 +777,7 @@ html,body{
 
   <div id="nameScreen">
     <h2>ENTER YOUR NAME</h2>
-    <div id="nameDisplay" class="empty"></div>
+    <input id="playerNameInput" maxlength="10" autocomplete="off" placeholder="NAME" />
     <div id="romanPreview">PLAYER</div>
     <button id="startNameBtn">START</button>
   </div>
@@ -161,6 +790,7 @@ html,body{
       <div id="resultScore"><span id="resultName">PLAYER</span> SCORE <span id="finalScore">0</span></div>
       <div id="leaderboard"></div>
     </div>
+    <button id="restartBtn">RETRY</button>
   </div>
 </div>
 
@@ -175,7 +805,7 @@ const timePanel = document.getElementById('timePanel');
 const message = document.getElementById('message');
 const startScreen = document.getElementById('startScreen');
 const nameScreen = document.getElementById('nameScreen');
-const nameDisplay = document.getElementById('nameDisplay');
+const playerNameInput = document.getElementById('playerNameInput');
 const romanPreview = document.getElementById('romanPreview');
 const startNameBtn = document.getElementById('startNameBtn');
 const finishOverlay = document.getElementById('finishOverlay');
@@ -183,391 +813,648 @@ const endScreen = document.getElementById('endScreen');
 const finalScore = document.getElementById('finalScore');
 const resultName = document.getElementById('resultName');
 const leaderboard = document.getElementById('leaderboard');
+const restartBtn = document.getElementById('restartBtn');
 const resultContent = document.getElementById('resultContent');
 const touchLeft = document.getElementById('touchLeft');
 const touchRight = document.getElementById('touchRight');
 
-function createSmartAudio(sources){
-  const audio = new Audio();
-  audio.preload = 'auto';
-  audio.setAttribute('playsinline','');
-  audio.setAttribute('webkit-playsinline','');
-  const usable = sources.filter(s => !s.type || audio.canPlayType(s.type));
-  audio.src = (usable[0] || sources[0]).src;
-  audio.load();
-  return audio;
-}
-
-const titleBgm = createSmartAudio([
-  {src:'UltraNiigata_Man_Title_Theme_loop30(2).mp3', type:'audio/mpeg'},
-  {src:'UltraNiigata_Man_Title_Theme_loop30(2).ogg', type:'audio/ogg'}
-]);
-const gameBgm = createSmartAudio([
-  {src:'UltraNiigata_Man_Gameplay_Theme_loop120(1).mp3', type:'audio/mpeg'},
-  {src:'UltraNiigata_Man_Gameplay_Theme_loop120(1).ogg', type:'audio/ogg'}
-]);
-const victoryFanfare = createSmartAudio([{src:'UltraNiigata_Complete_Victory_Fanfare_5s.mp3', type:'audio/mpeg'}]);
-const resultBgm = createSmartAudio([{src:'UltraNiigata_Catch_Result_Screen_loop30.mp3', type:'audio/mpeg'}]);
-
+const titleBgm = new Audio('UltraNiigata_Man_Title_Theme_loop30.ogg');
+const gameBgm = new Audio('UltraNiigata_Man_Gameplay_Theme_loop120.ogg');
+const victoryFanfare = new Audio('UltraNiigata_Complete_Victory_Fanfare_5s.mp3');
+const resultBgm = new Audio('UltraNiigata_Catch_Result_Screen_loop30.mp3');
 titleBgm.loop = true;
 gameBgm.loop = true;
 resultBgm.loop = true;
-titleBgm.volume = .85;
-gameBgm.volume = .85;
+titleBgm.volume = 0.85;
+gameBgm.volume = 0.85;
 victoryFanfare.volume = 1;
-resultBgm.volume = .85;
+resultBgm.volume = 0.85;
+
+let score = 0;
+let time = 30;
+let playerX = window.innerWidth / 2;
+let keys = {};
+let items = [];
+let gameRunning = false;
+let spawnTimer = null;
+let countdownTimer = null;
+let animationId = null;
+let victoryPlayed = false;
+let bgStage = 1;
+let touchDir = 0;
+let playerName = 'PLAYER';
+
+const LEADERBOARD_KEY = 'ultraNiigataCatchLeaderboardV1';
+
+const itemTypes = [
+  { name:'ぽっぽ焼', image:'item_6.png', point:10, weight:15 },
+  { name:'錦鯉', image:'item_10.png', point:10, weight:15 },
+  { name:'苺', image:'item_11.png', point:20, weight:14 },
+  { name:'おにぎり', image:'item_5.png', point:30, weight:12 },
+  { name:'へぎそば', image:'item_8.png', point:40, weight:10 },
+  { name:'日本酒', image:'item_3.png', point:50, weight:9 },
+  { name:'笹団子', image:'item_7.png', point:60, weight:8 },
+  { name:'ラーメン', image:'item_2.png', point:70, weight:7 },
+  { name:'米俵', image:'item_1.png', point:80, weight:5 },
+  { name:'トキ', image:'item_9.png', point:90, weight:3 },
+  { name:'小判', image:'item_4.png', point:100, weight:2 },
+  { name:'爆弾', image:'item_12.png', point:-50, weight:10, bomb:true }
+];
+
+const kanaMap = {
+  'あ':'A','い':'I','う':'U','え':'E','お':'O',
+  'か':'KA','き':'KI','く':'KU','け':'KE','こ':'KO',
+  'さ':'SA','し':'SHI','す':'SU','せ':'SE','そ':'SO',
+  'た':'TA','ち':'CHI','つ':'TSU','て':'TE','と':'TO',
+  'な':'NA','に':'NI','ぬ':'NU','ね':'NE','の':'NO',
+  'は':'HA','ひ':'HI','ふ':'FU','へ':'HE','ほ':'HO',
+  'ま':'MA','み':'MI','む':'MU','め':'ME','も':'MO',
+  'や':'YA','ゆ':'YU','よ':'YO',
+  'ら':'RA','り':'RI','る':'RU','れ':'RE','ろ':'RO',
+  'わ':'WA','を':'O','ん':'N',
+  'が':'GA','ぎ':'GI','ぐ':'GU','げ':'GE','ご':'GO',
+  'ざ':'ZA','じ':'JI','ず':'ZU','ぜ':'ZE','ぞ':'ZO',
+  'だ':'DA','ぢ':'JI','づ':'ZU','で':'DE','ど':'DO',
+  'ば':'BA','び':'BI','ぶ':'BU','べ':'BE','ぼ':'BO',
+  'ぱ':'PA','ぴ':'PI','ぷ':'PU','ぺ':'PE','ぽ':'PO',
+  'ぁ':'A','ぃ':'I','ぅ':'U','ぇ':'E','ぉ':'O',
+  'ゃ':'YA','ゅ':'YU','ょ':'YO',
+  'ア':'A','イ':'I','ウ':'U','エ':'E','オ':'O',
+  'カ':'KA','キ':'KI','ク':'KU','ケ':'KE','コ':'KO',
+  'サ':'SA','シ':'SHI','ス':'SU','セ':'SE','ソ':'SO',
+  'タ':'TA','チ':'CHI','ツ':'TSU','テ':'TE','ト':'TO',
+  'ナ':'NA','ニ':'NI','ヌ':'NU','ネ':'NE','ノ':'NO',
+  'ハ':'HA','ヒ':'HI','フ':'FU','ヘ':'HE','ホ':'HO',
+  'マ':'MA','ミ':'MI','ム':'MU','メ':'ME','モ':'MO',
+  'ヤ':'YA','ユ':'YU','ヨ':'YO',
+  'ラ':'RA','リ':'RI','ル':'RU','レ':'RE','ロ':'RO',
+  'ワ':'WA','ヲ':'O','ン':'N',
+  'ガ':'GA','ギ':'GI','グ':'GU','ゲ':'GE','ゴ':'GO',
+  'ザ':'ZA','ジ':'JI','ズ':'ZU','ゼ':'ZE','ゾ':'ZO',
+  'ダ':'DA','ヂ':'JI','ヅ':'ZU','デ':'DE','ド':'DO',
+  'バ':'BA','ビ':'BI','ブ':'BU','ベ':'BE','ボ':'BO',
+  'パ':'PA','ピ':'PI','プ':'PU','ペ':'PE','ポ':'PO',
+  'ァ':'A','ィ':'I','ゥ':'U','ェ':'E','ォ':'O',
+  'ャ':'YA','ュ':'YU','ョ':'YO'
+};
+
+const nameDictionary = {
+  '山本':'YAMAMOTO',
+  '美紅':'MIKU',
+  'みく':'MIKU',
+  'ミク':'MIKU',
+  '落合':'OCHIAI',
+  '新潟':'NIIGATA',
+  '佐渡':'SADO',
+  '田中':'TANAKA',
+  '佐藤':'SATO',
+  '鈴木':'SUZUKI',
+  '高橋':'TAKAHASHI',
+  '伊藤':'ITO',
+  '渡辺':'WATANABE'
+};
+
+function safePlay(audio){
+  audio.play().catch(()=>{});
+}
+
+function stopAudio(audio){
+  audio.pause();
+  audio.currentTime = 0;
+}
 
 let audioUnlocked = false;
+
 function unlockAudio(){
   if(audioUnlocked) return;
   audioUnlocked = true;
 
   [titleBgm, gameBgm, victoryFanfare, resultBgm].forEach(audio => {
     const oldVolume = audio.volume;
-    audio.volume = 0;
+    audio.muted = true;
     audio.play().then(() => {
       audio.pause();
       audio.currentTime = 0;
+      audio.muted = false;
       audio.volume = oldVolume;
     }).catch(() => {
+      audio.muted = false;
       audio.volume = oldVolume;
     });
   });
 }
-function safePlay(audio){
-  audio.play().catch(()=>{});
-};
 
-const nameDictionary = {
-  '山本':'YAMAMOTO','美紅':'MIKU','みく':'MIKU','ミク':'MIKU','落合':'OCHIAI',
-  '新潟':'NIIGATA','佐渡':'SADO','田中':'TANAKA','佐藤':'SATO','鈴木':'SUZUKI',
-  '高橋':'TAKAHASHI','伊藤':'ITO','渡辺':'WATANABE'
-};
+function playTitleBgm(){
+  if(!gameRunning && startScreen.style.display !== 'none'){
+    titleBgm.loop = true;
+    titleBgm.volume = 0.85;
+    safePlay(titleBgm);
+  }
+}
 
-function kanaCombo(two){
-  const map = {
-    'きゃ':'KYA','きゅ':'KYU','きょ':'KYO','しゃ':'SHA','しゅ':'SHU','しょ':'SHO','ちゃ':'CHA','ちゅ':'CHU','ちょ':'CHO',
-    'にゃ':'NYA','にゅ':'NYU','にょ':'NYO','ひゃ':'HYA','ひゅ':'HYU','ひょ':'HYO','みゃ':'MYA','みゅ':'MYU','みょ':'MYO',
-    'りゃ':'RYA','りゅ':'RYU','りょ':'RYO','ぎゃ':'GYA','ぎゅ':'GYU','ぎょ':'GYO','じゃ':'JA','じゅ':'JU','じょ':'JO',
-    'びゃ':'BYA','びゅ':'BYU','びょ':'BYO','ぴゃ':'PYA','ぴゅ':'PYU','ぴょ':'PYO',
-    'キャ':'KYA','キュ':'KYU','キョ':'KYO','シャ':'SHA','シュ':'SHU','ショ':'SHO','チャ':'CHA','チュ':'CHU','チョ':'CHO',
-    'ニャ':'NYA','ニュ':'NYU','ニョ':'NYO','ヒャ':'HYA','ヒュ':'HYU','ヒョ':'HYO','ミャ':'MYA','ミュ':'MYU','ミョ':'MYO',
-    'リャ':'RYA','リュ':'RYU','リョ':'RYO','ギャ':'GYA','ギュ':'GYU','ギョ':'GYO','ジャ':'JA','ジュ':'JU','ジョ':'JO',
-    'ビャ':'BYA','ビュ':'BYU','ビョ':'BYO','ピャ':'PYA','ピュ':'PYU','ピョ':'PYO'
-  };
-  return map[two] || null;
+function stopTitleBgm(){
+  stopAudio(titleBgm);
 }
 
 function toRomaji(input){
   const raw = (input || '').trim();
   if(!raw) return 'PLAYER';
+
   if(nameDictionary[raw]) return nameDictionary[raw];
 
   let output = '';
   let smallTsu = false;
-  for(let i=0;i<raw.length;i++){
+
+  for(let i = 0; i < raw.length; i++){
     const ch = raw[i];
-    if(ch === 'っ' || ch === 'ッ'){ smallTsu = true; continue; }
-    if(ch === 'ー'){
-      const last = output[output.length-1];
-      if(/[AEIOU]/.test(last)) output += last;
+
+    if(ch === 'っ' || ch === 'ッ'){
+      smallTsu = true;
       continue;
     }
-    const combo = kanaCombo(raw.slice(i,i+2));
-    let roma = combo || kanaMap[ch];
-    if(combo) i++;
-    if(!roma){
-      if(/[a-zA-Z0-9]/.test(ch)) roma = ch.toUpperCase();
-      else roma = '';
+
+    if(ch === 'ー'){
+      const m = output.match(/[AEIOU](?!.*[AEIOU])/);
+      if(m) output += output[output.length - 1];
+      continue;
     }
-    if(smallTsu && roma){ roma = roma[0] + roma; smallTsu = false; }
+
+    const two = raw.slice(i, i + 2);
+    const combo = kanaCombo(two);
+    let roma = combo || kanaMap[ch];
+
+    if(combo) i++;
+
+    if(!roma){
+      if(/[a-zA-Z0-9]/.test(ch)){
+        roma = ch.toUpperCase();
+      }else{
+        // 未登録の漢字などは表示を崩さないためスキップ
+        roma = '';
+      }
+    }
+
+    if(smallTsu && roma){
+      roma = roma[0] + roma;
+      smallTsu = false;
+    }
+
     output += roma;
   }
-  output = output.replace(/[^A-Z0-9]/g,'').slice(0,10);
+
+  output = output.replace(/[^A-Z0-9]/g, '').slice(0, 10);
   return output || 'PLAYER';
 }
 
-function updateNameDisplay(){
-  nameDisplay.textContent = nameRaw;
-  nameDisplay.classList.toggle('empty', nameRaw.length === 0);
-  romanPreview.textContent = toRomaji(nameRaw);
+function kanaCombo(two){
+  const map = {
+    'きゃ':'KYA','きゅ':'KYU','きょ':'KYO','しゃ':'SHA','しゅ':'SHU','しょ':'SHO',
+    'ちゃ':'CHA','ちゅ':'CHU','ちょ':'CHO','にゃ':'NYA','にゅ':'NYU','にょ':'NYO',
+    'ひゃ':'HYA','ひゅ':'HYU','ひょ':'HYO','みゃ':'MYA','みゅ':'MYU','みょ':'MYO',
+    'りゃ':'RYA','りゅ':'RYU','りょ':'RYO','ぎゃ':'GYA','ぎゅ':'GYU','ぎょ':'GYO',
+    'じゃ':'JA','じゅ':'JU','じょ':'JO','びゃ':'BYA','びゅ':'BYU','びょ':'BYO',
+    'ぴゃ':'PYA','ぴゅ':'PYU','ぴょ':'PYO',
+    'キャ':'KYA','キュ':'KYU','キョ':'KYO','シャ':'SHA','シュ':'SHU','ショ':'SHO',
+    'チャ':'CHA','チュ':'CHU','チョ':'CHO','ニャ':'NYA','ニュ':'NYU','ニョ':'NYO',
+    'ヒャ':'HYA','ヒュ':'HYU','ヒョ':'HYO','ミャ':'MYA','ミュ':'MYU','ミョ':'MYO',
+    'リャ':'RYA','リュ':'RYU','リョ':'RYO','ギャ':'GYA','ギュ':'GYU','ギョ':'GYO',
+    'ジャ':'JA','ジュ':'JU','ジョ':'JO','ビャ':'BYA','ビュ':'BYU','ビョ':'BYO',
+    'ピャ':'PYA','ピュ':'PYU','ピョ':'PYO'
+  };
+  return map[two] || null;
+}
+
+function updateRomanPreview(){
+  romanPreview.textContent = toRomaji(playerNameInput.value);
 }
 
 function openNameScreen(){
   unlockAudio();
-  if(startScreen.style.display !== 'none'){ titleBgm.volume=.85; safePlay(titleBgm); }
+  playTitleBgm();
   startScreen.style.display = 'none';
   nameScreen.style.display = 'flex';
-  nameRaw = '';
-  updateNameDisplay();
+  updateRomanPreview();
+  setTimeout(() => playerNameInput.focus(), 50);
 }
 
 function confirmNameAndStart(){
-  playerName = toRomaji(nameRaw);
+  playerName = toRomaji(playerNameInput.value);
   nameScreen.style.display = 'none';
   startGame();
 }
 
 function getLeaderboard(){
-  try{return JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || '[]');}
-  catch(e){return [];}
+  try{
+    return JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || '[]');
+  }catch(e){
+    return [];
+  }
 }
+
 function saveScore(){
   const list = getLeaderboard();
-  list.push({name:playerName,score:score,date:new Date().toISOString()});
-  list.sort((a,b)=>b.score-a.score);
-  localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(list.slice(0,10)));
+  list.push({ name:playerName, score:score, date:new Date().toISOString() });
+  list.sort((a,b) => b.score - a.score);
+  localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(list.slice(0, 10)));
 }
+
 function renderLeaderboard(){
   const list = getLeaderboard();
   let html = '<div id="leaderboardTitle">BEST 10</div>';
   if(list.length === 0){
     html += '<div class="leaderRow"><span>--</span><span>NO DATA</span><span>0</span></div>';
   }else{
-    list.forEach((row,index)=>{
-      const rank = String(index+1).padStart(2,'0');
-      html += '<div class="leaderRow"><span>'+rank+'</span><span>'+row.name+'</span><span>'+row.score+'</span></div>';
+    list.forEach((row, index) => {
+      const rank = String(index + 1).padStart(2, '0');
+      html += '<div class="leaderRow"><span>' + rank + '</span><span>' + row.name + '</span><span>' + row.score + '</span></div>';
     });
   }
   leaderboard.innerHTML = html;
 }
 
-function containRect(aspect){
-  const vw=window.innerWidth, vh=window.innerHeight;
-  let w,h,x,y;
-  if(vw/vh > aspect){ h=vh; w=vh*aspect; x=(vw-w)/2; y=0; }
-  else{ w=vw; h=vw/aspect; x=0; y=(vh-h)/2; }
-  return {x,y,w,h};
-}
-function positionHud(){
-  const r = containRect(4/3);
-  scorePanel.style.left = (r.x + r.w*(66/640)) + 'px';
-  scorePanel.style.top  = (r.y + r.h*(43/480)) + 'px';
-  timePanel.style.left  = (r.x + r.w*(592/640)) + 'px';
-  timePanel.style.top   = (r.y + r.h*(43/480)) + 'px';
-}
-function positionResultContent(){
-  const r = containRect(4/3);
-  resultContent.style.left = (r.x + r.w*(110/640)) + 'px';
-  resultContent.style.top = (r.y + r.h*(155/480)) + 'px';
-  resultContent.style.width = (r.w*(420/640)) + 'px';
-  resultContent.style.height = (r.h*(245/480)) + 'px';
-}
-function updatePlayer(){
-  const r = containRect(4/3);
-  player.style.transform = 'translate3d(' + (playerX - player.offsetWidth/2) + 'px,' + (r.y + r.h*(421/480) - player.offsetHeight) + 'px,0)';
-}
-
 function startGame(){
   unlockAudio();
   if(gameRunning) return;
-  startScreen.style.display='none';
-  nameScreen.style.display='none';
-  finishOverlay.style.display='none';
-  endScreen.style.display='none';
 
-  score=0; time=30; victoryPlayed=false; bgStage=1; touchDir=0;
-  items.forEach(i=>i.el.remove()); items=[];
-  scoreEl.textContent=score; timeEl.textContent=time;
+  startScreen.style.display = 'none';
+  nameScreen.style.display = 'none';
+  finishOverlay.style.display = 'none';
+  endScreen.style.display = 'none';
+
+  score = 0;
+  time = 30;
+  victoryPlayed = false;
+  bgStage = 1;
+  touchDir = 0;
+  items.forEach(i => i.el.remove());
+  items = [];
+
+  scoreEl.textContent = score;
+  timeEl.textContent = time;
   updateBackground(true);
-  playerX=window.innerWidth/2;
-  updatePlayer(); positionHud(); positionResultContent();
 
-  stopAudio(titleBgm); stopAudio(resultBgm);
-  gameBgm.currentTime=0; gameBgm.volume=.85; safePlay(gameBgm);
+  playerX = window.innerWidth / 2;
+  updatePlayer();
+  positionHud();
+  positionResultContent();
 
-  gameRunning=true;
-  spawnTimer=setInterval(spawnItem,520);
-  countdownTimer=setInterval(()=>{
-    time--; timeEl.textContent=time;
-    if(time<=0) endGame();
-  },1000);
+  stopTitleBgm();
+  stopAudio(resultBgm);
+  gameBgm.currentTime = 0;
+  gameBgm.volume = 0.85;
+  safePlay(gameBgm);
+
+  gameRunning = true;
+  spawnTimer = setInterval(spawnItem, 430);
+  countdownTimer = setInterval(() => {
+    time--;
+    timeEl.textContent = time;
+    if(time <= 0) endGame();
+  }, 1000);
+
   loop();
 }
 
 function endGame(){
   if(!gameRunning) return;
-  gameRunning=false;
-  clearInterval(spawnTimer); clearInterval(countdownTimer); cancelAnimationFrame(animationId);
-  touchDir=0;
-  stopAudio(gameBgm); stopAudio(victoryFanfare);
-  finishOverlay.style.display='flex';
-  setTimeout(()=>{
-    finishOverlay.style.display='none';
+  gameRunning = false;
+  clearInterval(spawnTimer);
+  clearInterval(countdownTimer);
+  cancelAnimationFrame(animationId);
+  touchDir = 0;
+
+  stopAudio(gameBgm);
+  stopAudio(victoryFanfare);
+
+  finishOverlay.style.display = 'flex';
+
+  setTimeout(() => {
+    finishOverlay.style.display = 'none';
     saveScore();
-    finalScore.textContent=score;
-    resultName.textContent=playerName;
+    finalScore.textContent = score;
+    resultName.textContent = playerName;
     renderLeaderboard();
-    endScreen.style.display='flex';
+    endScreen.style.display = 'flex';
     positionResultContent();
-    resultBgm.currentTime=0; safePlay(resultBgm);
-  },1000);
+    resultBgm.currentTime = 0;
+    safePlay(resultBgm);
+  }, 1000);
 }
+
 function restartGame(){
-  endScreen.style.display='none';
-  finishOverlay.style.display='none';
-  startScreen.style.display='flex';
-  score=0; time=30;
-  scoreEl.textContent=score; timeEl.textContent=time;
+  endScreen.style.display = 'none';
+  finishOverlay.style.display = 'none';
+  startScreen.style.display = 'flex';
+  playerNameInput.value = '';
+  updateRomanPreview();
+  score = 0;
+  time = 30;
+  scoreEl.textContent = score;
+  timeEl.textContent = time;
   updateBackground(true);
   stopAudio(resultBgm);
-  safePlay(titleBgm);
+  playTitleBgm();
 }
 
 function pickItemType(){
-  const total = itemTypes.reduce((sum,item)=>sum+item.weight,0);
-  let r = Math.random()*total;
-  for(const item of itemTypes){ r -= item.weight; if(r <= 0) return item; }
+  const total = itemTypes.reduce((sum, item) => sum + item.weight, 0);
+  let r = Math.random() * total;
+  for(const item of itemTypes){
+    r -= item.weight;
+    if(r <= 0) return item;
+  }
   return itemTypes[0];
 }
+
 function spawnItem(){
   if(!gameRunning) return;
-  if(items.length > 14) return;
+
   const type = pickItemType();
   const el = document.createElement('div');
-  el.className='item';
-  if(type.image) el.style.backgroundImage = "url('" + type.image + "')";
+  el.className = 'item';
+
+  if(type.image){
+    el.style.backgroundImage = "url('" + type.image + "')";
+  }else{
+    el.textContent = type.emoji || '';
+  }
   if(type.bomb) el.classList.add('bomb');
-  const size = window.innerWidth < 900 ? 58 : 68;
+
+  const size = window.innerWidth < 900 ? 60 : 72;
   const x = Math.random() * (window.innerWidth - size);
+  el.style.left = x + 'px';
+  el.style.top = '-80px';
   game.appendChild(el);
-  items.push({el,x,y:-80,speed:3.8+Math.random()*3.5,type});
-  el.style.transform = 'translate3d(' + x + 'px,-80px,0)';
+
+  items.push({el, x, y:-80, size, speed:3.8 + Math.random() * 3.8, type});
 }
+
 function loop(){
   if(!gameRunning) return;
   movePlayer();
   moveItems();
-  animationId=requestAnimationFrame(loop);
+  animationId = requestAnimationFrame(loop);
 }
+
 function movePlayer(){
-  if(keys.ArrowLeft || keys.a || keys.A) playerX -= 18;
-  if(keys.ArrowRight || keys.d || keys.D) playerX += 18;
-  if(touchDir !== 0) playerX += touchDir * 18;
-  playerX = Math.max(54, Math.min(window.innerWidth-54, playerX));
+  if(keys.ArrowLeft || keys.a || keys.A) playerX -= 9;
+  if(keys.ArrowRight || keys.d || keys.D) playerX += 9;
+  if(touchDir !== 0) playerX += touchDir * 9;
+  playerX = Math.max(54, Math.min(window.innerWidth - 54, playerX));
   updatePlayer();
 }
+
+function updatePlayer(){
+  const r = containRect(4 / 3);
+  player.style.left = (playerX - player.offsetWidth / 2) + 'px';
+  // 下バーの上に立つ位置
+  player.style.top = (r.y + r.h * (421 / 480) - player.offsetHeight) + 'px';
+}
+
 function moveItems(){
   const playerRect = player.getBoundingClientRect();
-  for(let i=items.length-1;i>=0;i--){
+
+  for(let i = items.length - 1; i >= 0; i--){
     const item = items[i];
     item.y += item.speed;
-    item.el.style.transform = 'translate3d(' + item.x + 'px,' + item.y + 'px,0)';
+    item.el.style.top = item.y + 'px';
+
     const itemRect = item.el.getBoundingClientRect();
-    const hit = itemRect.left < playerRect.right && itemRect.right > playerRect.left && itemRect.top < playerRect.bottom && itemRect.bottom > playerRect.top;
+    const hit =
+      itemRect.left < playerRect.right &&
+      itemRect.right > playerRect.left &&
+      itemRect.top < playerRect.bottom &&
+      itemRect.bottom > playerRect.top;
+
     if(hit){
       catchItem(item);
-      item.el.remove(); items.splice(i,1);
+      item.el.remove();
+      items.splice(i, 1);
       continue;
     }
+
     if(item.y > window.innerHeight + 100){
-      item.el.remove(); items.splice(i,1);
+      item.el.remove();
+      items.splice(i, 1);
     }
   }
 }
+
 function catchItem(item){
   score += item.type.point;
   if(score < 0) score = 0;
   scoreEl.textContent = score;
+
   if(item.type.bomb){
     showMessage('-50');
     game.classList.add('shake');
     player.classList.add('player-hit');
-    setTimeout(()=>game.classList.remove('shake'),240);
-    setTimeout(()=>player.classList.remove('player-hit'),160);
+    setTimeout(() => game.classList.remove('shake'), 260);
+    setTimeout(() => player.classList.remove('player-hit'), 180);
   }else{
     showMessage('+' + item.type.point);
   }
+
   updateBackground(false);
   checkVictoryFanfare();
 }
+
 function updateBackground(initial){
-  let nextStage=1, bg='BG3.png';
-  if(score>=1000){ nextStage=4; bg='BG1.png'; }
-  else if(score>=601){ nextStage=3; bg='BG4.png'; }
-  else if(score>=301){ nextStage=2; bg='BG2.png'; }
+  let nextStage = 1;
+  let bg = 'BG3.png';
+
+  if(score >= 1000){
+    nextStage = 4;
+    bg = 'BG1.png';
+  }else if(score >= 601){
+    nextStage = 3;
+    bg = 'BG4.png';
+  }else if(score >= 301){
+    nextStage = 2;
+    bg = 'BG2.png';
+  }
+
   if(initial || nextStage !== bgStage){
     game.style.backgroundImage = "url('" + bg + "')";
-    if(!initial){ game.classList.add('flash'); setTimeout(()=>game.classList.remove('flash'),380); }
+    if(!initial){
+      game.classList.add('flash');
+      setTimeout(() => game.classList.remove('flash'), 500);
+    }
     bgStage = nextStage;
   }
 }
+
 function checkVictoryFanfare(){
-  if(score>=1000 && !victoryPlayed){
-    victoryPlayed=true;
-    gameBgm.volume=.28;
-    victoryFanfare.currentTime=0; safePlay(victoryFanfare);
-    setTimeout(()=>{ if(gameRunning) gameBgm.volume=.85; },5000);
+  if(score >= 1000 && !victoryPlayed){
+    victoryPlayed = true;
+    gameBgm.volume = 0.28;
+    victoryFanfare.currentTime = 0;
+    safePlay(victoryFanfare);
+    setTimeout(() => {
+      if(gameRunning) gameBgm.volume = 0.85;
+    }, 5000);
   }
 }
+
 function showMessage(text){
-  message.textContent=text;
+  message.textContent = text;
   message.classList.remove('show-message');
   void message.offsetWidth;
   message.classList.add('show-message');
 }
 
-startScreen.addEventListener('click', e=>{
+function positionHud(){
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const bgAspect = 4 / 3;
+
+  let bgW, bgH, bgX, bgY;
+  if(vw / vh > bgAspect){
+    bgH = vh;
+    bgW = vh * bgAspect;
+    bgX = (vw - bgW) / 2;
+    bgY = 0;
+  }else{
+    bgW = vw;
+    bgH = vw / bgAspect;
+    bgX = 0;
+    bgY = (vh - bgH) / 2;
+  }
+
+  scorePanel.style.left = (bgX + bgW * (155 / 1536)) + 'px';
+  scorePanel.style.top  = (bgY + bgH * (98 / 1152)) + 'px';
+
+  timePanel.style.left = (bgX + bgW * (1378 / 1536)) + 'px';
+  timePanel.style.top  = (bgY + bgH * (98 / 1152)) + 'px';
+}
+
+
+function containRect(aspect){
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let w, h, x, y;
+  if(vw / vh > aspect){
+    h = vh;
+    w = vh * aspect;
+    x = (vw - w) / 2;
+    y = 0;
+  }else{
+    w = vw;
+    h = vw / aspect;
+    x = 0;
+    y = (vh - h) / 2;
+  }
+  return {x,y,w,h};
+}
+
+function positionHud(){
+  const r = containRect(4 / 3);
+
+  
+
+  // play_bar.png の SCORE / TIME 下に数字を表示
+  scorePanel.style.left = (r.x + r.w * (66 / 640)) + 'px';
+  scorePanel.style.top  = (r.y + r.h * (43 / 480)) + 'px';
+
+  timePanel.style.left = (r.x + r.w * (592 / 640)) + 'px';
+  timePanel.style.top  = (r.y + r.h * (43 / 480)) + 'px';
+}
+
+function positionResultContent(){
+  const r = containRect(4 / 3);
+
+  // 黄色枠内の中央。RESULTロゴ下から下枠内に収める。
+  resultContent.style.left = (r.x + r.w * (110 / 640)) + 'px';
+  resultContent.style.top = (r.y + r.h * (155 / 480)) + 'px';
+  resultContent.style.width = (r.w * (420 / 640)) + 'px';
+  resultContent.style.height = (r.h * (245 / 480)) + 'px';
+
+  restartBtn.style.left = (r.x + r.w * (320 / 640)) + 'px';
+  restartBtn.style.top = (r.y + r.h * (408 / 480)) + 'px';
+  restartBtn.style.transform = 'translate(-50%,-50%)';
+}
+
+startScreen.addEventListener('click', e => {
   unlockAudio();
-  const y=e.clientY,h=window.innerHeight;
-  if(y > h*.64 && y < h*.92) openNameScreen();
-  else { titleBgm.volume=.85; safePlay(titleBgm); }
+  const y = e.clientY;
+  const h = window.innerHeight;
+  if(y > h * 0.64 && y < h * 0.92){
+    openNameScreen();
+  }else{
+    playTitleBgm();
+  }
 });
-startScreen.addEventListener('touchstart', e=>{
+
+startScreen.addEventListener('touchstart', e => {
   unlockAudio();
-  const y=e.touches[0].clientY,h=window.innerHeight;
-  if(y > h*.64 && y < h*.92){ e.preventDefault(); openNameScreen(); }
-  else { titleBgm.volume=.85; safePlay(titleBgm); }
+  const y = e.touches[0].clientY;
+  const h = window.innerHeight;
+  if(y > h * 0.64 && y < h * 0.92){
+    e.preventDefault();
+    openNameScreen();
+  }else{
+    playTitleBgm();
+  }
 },{passive:false});
 
-startNameBtn.addEventListener('click', ()=>{ unlockAudio(); confirmNameAndStart(); });
-endScreen.addEventListener('click', restartGame);
+playerNameInput.addEventListener('input', updateRomanPreview);
 
-window.addEventListener('keydown', e=>{
+window.addEventListener('keydown', e => {
   unlockAudio();
-
-  if(!gameRunning && nameScreen.style.display !== 'none'){
-    if(e.code === 'Enter'){ e.preventDefault(); confirmNameAndStart(); return; }
-    if(e.code === 'Backspace'){ e.preventDefault(); nameRaw = nameRaw.slice(0,-1); updateNameDisplay(); return; }
-    if(e.key && e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey){
-      e.preventDefault();
-      if(nameRaw.length < 10){ nameRaw += e.key; updateNameDisplay(); }
-      return;
-    }
-    return;
-  }
-
-  keys[e.key]=true;
+  keys[e.key] = true;
 
   if(!gameRunning && endScreen.style.display !== 'none' && e.code === 'Space'){
-    e.preventDefault(); restartGame();
+    e.preventDefault();
+    restartGame();
   }else if(!gameRunning && startScreen.style.display !== 'none' && e.code === 'Space'){
-    e.preventDefault(); openNameScreen();
+    e.preventDefault();
+    openNameScreen();
+  }else if(!gameRunning && nameScreen.style.display !== 'none' && e.code === 'Enter'){
+    e.preventDefault();
+    confirmNameAndStart();
   }
 });
-window.addEventListener('keyup', e=>{ keys[e.key]=false; });
 
-touchLeft.addEventListener('touchstart', e=>{ e.preventDefault(); touchDir=-1; },{passive:false});
-touchRight.addEventListener('touchstart', e=>{ e.preventDefault(); touchDir=1; },{passive:false});
-touchLeft.addEventListener('touchend', ()=>{ touchDir=0; });
-touchRight.addEventListener('touchend', ()=>{ touchDir=0; });
-touchLeft.addEventListener('mousedown', ()=>{ touchDir=-1; });
-touchRight.addEventListener('mousedown', ()=>{ touchDir=1; });
-window.addEventListener('mouseup', ()=>{ touchDir=0; });
-
-window.addEventListener('resize', ()=>{
-  playerX=Math.max(54,Math.min(window.innerWidth-54,playerX));
-  updatePlayer(); positionHud(); positionResultContent();
+window.addEventListener('keyup', e => {
+  keys[e.key] = false;
 });
 
-document.addEventListener('DOMContentLoaded', ()=>{
-  positionHud(); positionResultContent(); updateNameDisplay();
+touchLeft.addEventListener('touchstart', e => { e.preventDefault(); touchDir = -1; }, {passive:false});
+touchRight.addEventListener('touchstart', e => { e.preventDefault(); touchDir = 1; }, {passive:false});
+touchLeft.addEventListener('touchend', () => { touchDir = 0; });
+touchRight.addEventListener('touchend', () => { touchDir = 0; });
+touchLeft.addEventListener('mousedown', () => { touchDir = -1; });
+touchRight.addEventListener('mousedown', () => { touchDir = 1; });
+window.addEventListener('mouseup', () => { touchDir = 0; });
+
+startNameBtn.addEventListener('click', () => { unlockAudio(); confirmNameAndStart(); });
+restartBtn.addEventListener('click', () => { unlockAudio(); restartGame(); });
+endScreen.addEventListener('click', restartGame);
+
+window.addEventListener('resize', () => {
+  playerX = Math.max(54, Math.min(window.innerWidth - 54, playerX));
+  updatePlayer();
+  positionHud();
+  positionResultContent();
 });
 
-window.addEventListener('pointerdown', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
+  positionHud();
+  positionResultContent();
+  updateRomanPreview();
+  playTitleBgm();
+});
+
+// ブラウザの自動再生制限対策：操作後にタイトルBGMを鳴らす
+window.addEventListener('pointerdown', () => {
   unlockAudio();
-  if(!gameRunning && startScreen.style.display !== 'none'){ titleBgm.volume=.85; safePlay(titleBgm); }
+  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
 });
+
+window.addEventListener('touchend', () => {
+  unlockAudio();
+  if(!gameRunning && startScreen.style.display !== 'none') playTitleBgm();
+},{passive:true});
 </script>
 </body>
 </html>
