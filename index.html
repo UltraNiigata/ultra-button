@@ -764,6 +764,25 @@ button{
   pointer-events:auto!important;
   touch-action:auto!important;
 }
+
+/* iPad Bluetooth keyboard name input fix */
+#playerNameInput{
+  min-height:72px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  -webkit-user-select:text!important;
+  user-select:text!important;
+  pointer-events:auto!important;
+  touch-action:auto!important;
+  caret-color:#fff!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+}
+#playerNameInput:empty::before{
+  content:attr(data-placeholder);
+  color:rgba(255,255,255,.45);
+}
 </style>
 </head>
 <body>
@@ -785,7 +804,7 @@ button{
 
   <div id="nameScreen">
     <h2>ENTER YOUR NAME</h2>
-    <input id="playerNameInput" maxlength="10" autocomplete="off" autocapitalize="characters" inputmode="text" enterkeyhint="go" placeholder="NAME" />
+    <div id="playerNameInput" contenteditable="true" role="textbox" aria-label="NAME" data-placeholder="NAME"></div>
     <div id="romanPreview">PLAYER</div>
     <button id="startNameBtn">START</button>
   </div>
@@ -1084,7 +1103,29 @@ function kanaCombo(two){
 }
 
 function updateRomanPreview(){
-  romanPreview.textContent = toRomaji(playerNameInput.value);
+  romanPreview.textContent = toRomaji(playerNameInput.textContent);
+}
+
+function placeCaretAtEnd(el){
+  el.focus();
+  if(typeof window.getSelection !== 'undefined' && typeof document.createRange !== 'undefined'){
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
+
+function cleanNameField(){
+  let text = playerNameInput.textContent || '';
+  text = text.replace(/\s+/g, '').slice(0, 10);
+  if(playerNameInput.textContent !== text){
+    playerNameInput.textContent = text;
+    placeCaretAtEnd(playerNameInput);
+  }
+  updateRomanPreview();
 }
 
 function openNameScreen(){
@@ -1094,14 +1135,17 @@ function openNameScreen(){
   nameScreen.style.display = 'flex';
   updateRomanPreview();
 
+  playerNameInput.focus();
+  placeCaretAtEnd(playerNameInput);
+
   setTimeout(() => {
     playerNameInput.focus();
-    playerNameInput.click();
-  }, 80);
+    placeCaretAtEnd(playerNameInput);
+  }, 50);
 }
 
 function confirmNameAndStart(){
-  playerName = toRomaji(playerNameInput.value);
+  playerName = toRomaji(playerNameInput.textContent);
   nameScreen.style.display = 'none';
   startGame();
 }
@@ -1208,7 +1252,7 @@ function restartGame(){
   endScreen.style.display = 'none';
   finishOverlay.style.display = 'none';
   startScreen.style.display = 'flex';
-  playerNameInput.value = '';
+  playerNameInput.textContent = '';
   updateRomanPreview();
   score = 0;
   time = 30;
@@ -1460,7 +1504,40 @@ startScreen.addEventListener('touchstart', e => {
   }
 },{passive:false});
 
-playerNameInput.addEventListener('input', updateRomanPreview);
+playerNameInput.addEventListener('input', cleanNameField);
+
+playerNameInput.addEventListener('click', () => {
+  playerNameInput.focus();
+  placeCaretAtEnd(playerNameInput);
+});
+
+playerNameInput.addEventListener('touchstart', () => {
+  playerNameInput.focus();
+  placeCaretAtEnd(playerNameInput);
+},{passive:true});
+
+playerNameInput.addEventListener('keydown', e => {
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    confirmNameAndStart();
+    return;
+  }
+  if(e.key === 'Backspace'){
+    e.preventDefault();
+    playerNameInput.textContent = (playerNameInput.textContent || '').slice(0, -1);
+    placeCaretAtEnd(playerNameInput);
+    updateRomanPreview();
+    return;
+  }
+  if(e.key && e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey){
+    e.preventDefault();
+    if((playerNameInput.textContent || '').length < 10){
+      playerNameInput.textContent = (playerNameInput.textContent || '') + e.key;
+      placeCaretAtEnd(playerNameInput);
+      updateRomanPreview();
+    }
+  }
+});
 
 nameScreen.addEventListener('click', e => {
   if(e.target !== startNameBtn){
@@ -1471,14 +1548,38 @@ nameScreen.addEventListener('click', e => {
 window.addEventListener('keydown', e => {
   unlockAudio();
 
-  const isTypingName = document.activeElement === playerNameInput;
+  const isNameScreen = !gameRunning && nameScreen.style.display !== 'none';
 
-  if(isTypingName){
-    // 名前入力中は通常の文字入力を邪魔しない。Enterだけゲーム開始。
+  if(isNameScreen){
+    if(document.activeElement !== playerNameInput){
+      playerNameInput.focus();
+      placeCaretAtEnd(playerNameInput);
+    }
+
     if(e.code === 'Enter'){
       e.preventDefault();
       confirmNameAndStart();
+      return;
     }
+
+    if(e.code === 'Backspace'){
+      e.preventDefault();
+      playerNameInput.textContent = (playerNameInput.textContent || '').slice(0, -1);
+      placeCaretAtEnd(playerNameInput);
+      updateRomanPreview();
+      return;
+    }
+
+    if(e.key && e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey){
+      e.preventDefault();
+      if((playerNameInput.textContent || '').length < 10){
+        playerNameInput.textContent = (playerNameInput.textContent || '') + e.key;
+        placeCaretAtEnd(playerNameInput);
+        updateRomanPreview();
+      }
+      return;
+    }
+
     return;
   }
 
@@ -1490,9 +1591,6 @@ window.addEventListener('keydown', e => {
   }else if(!gameRunning && startScreen.style.display !== 'none' && e.code === 'Space'){
     e.preventDefault();
     openNameScreen();
-  }else if(!gameRunning && nameScreen.style.display !== 'none' && e.code === 'Enter'){
-    e.preventDefault();
-    confirmNameAndStart();
   }
 });
 
