@@ -818,10 +818,59 @@ const resultContent = document.getElementById('resultContent');
 const touchLeft = document.getElementById('touchLeft');
 const touchRight = document.getElementById('touchRight');
 
-const titleBgm = new Audio('UltraNiigata_Man_Title_Theme_loop30.ogg');
-const gameBgm = new Audio('UltraNiigata_Man_Gameplay_Theme_loop120.ogg');
-const victoryFanfare = new Audio('UltraNiigata_Complete_Victory_Fanfare_5s.mp3');
-const resultBgm = new Audio('UltraNiigata_Catch_Result_Screen_loop30.mp3');
+function createSmartAudio(sources){
+  const audio = new Audio();
+  audio.preload = 'auto';
+  audio.setAttribute('playsinline','');
+  audio.setAttribute('webkit-playsinline','');
+
+  let index = 0;
+
+  function canUse(source){
+    if(!source.type) return true;
+    const result = audio.canPlayType(source.type);
+    return result === 'probably' || result === 'maybe';
+  }
+
+  const usable = sources.filter(canUse);
+  const list = usable.length ? usable : sources;
+
+  function setSource(i){
+    index = i;
+    audio.src = list[index].src;
+    audio.load();
+  }
+
+  audio.addEventListener('error', () => {
+    if(index + 1 < list.length){
+      setSource(index + 1);
+    }
+  });
+
+  setSource(0);
+  return audio;
+}
+
+// iPad SafariはOGG非対応なので、MP3を優先して読み込みます。
+// 同じフォルダにMP3版も置いてください。
+const titleBgm = createSmartAudio([
+  {src:'UltraNiigata_Man_Title_Theme_loop30(2).mp3', type:'audio/mpeg'},
+  {src:'UltraNiigata_Man_Title_Theme_loop30(2).ogg', type:'audio/ogg'}
+]);
+
+const gameBgm = createSmartAudio([
+  {src:'UltraNiigata_Man_Gameplay_Theme_loop120(1).mp3', type:'audio/mpeg'},
+  {src:'UltraNiigata_Man_Gameplay_Theme_loop120(1).ogg', type:'audio/ogg'}
+]);
+
+const victoryFanfare = createSmartAudio([
+  {src:'UltraNiigata_Complete_Victory_Fanfare_5s.mp3', type:'audio/mpeg'}
+]);
+
+const resultBgm = createSmartAudio([
+  {src:'UltraNiigata_Catch_Result_Screen_loop30.mp3', type:'audio/mpeg'}
+]);
+
 titleBgm.loop = true;
 gameBgm.loop = true;
 resultBgm.loop = true;
@@ -915,6 +964,7 @@ const nameDictionary = {
 };
 
 function safePlay(audio){
+  audio.load();
   audio.play().catch(()=>{});
 }
 
@@ -930,17 +980,18 @@ function unlockAudio(){
   audioUnlocked = true;
 
   [titleBgm, gameBgm, victoryFanfare, resultBgm].forEach(audio => {
-    const oldVolume = audio.volume;
-    audio.muted = true;
-    audio.play().then(() => {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.muted = false;
-      audio.volume = oldVolume;
-    }).catch(() => {
-      audio.muted = false;
-      audio.volume = oldVolume;
-    });
+    audio.load();
+  });
+
+  // iPad Safari対策：ユーザー操作の瞬間に実音声の再生権限を取る
+  const oldVolume = titleBgm.volume;
+  titleBgm.volume = 0.01;
+  titleBgm.play().then(() => {
+    titleBgm.pause();
+    titleBgm.currentTime = 0;
+    titleBgm.volume = oldVolume;
+  }).catch(() => {
+    titleBgm.volume = oldVolume;
   });
 }
 
