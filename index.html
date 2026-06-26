@@ -756,6 +756,20 @@ button{
   display:none!important;
 }
 
+
+/* ===== PLAYER PERFORMANCE FIX ===== */
+#player{
+  left:0!important;
+  top:0!important;
+  bottom:auto!important;
+  z-index:21!important;
+  will-change:transform!important;
+  transform:translate3d(0,0,0);
+}
+.item{
+  will-change:transform!important;
+}
+
 </style>
 </head>
 <body>
@@ -964,7 +978,6 @@ const nameDictionary = {
 };
 
 function safePlay(audio){
-  audio.load();
   audio.play().catch(()=>{});
 }
 
@@ -1156,7 +1169,7 @@ function startGame(){
   safePlay(gameBgm);
 
   gameRunning = true;
-  spawnTimer = setInterval(spawnItem, 430);
+  spawnTimer = setInterval(spawnItem, 500);
   countdownTimer = setInterval(() => {
     time--;
     timeEl.textContent = time;
@@ -1219,6 +1232,7 @@ function pickItemType(){
 
 function spawnItem(){
   if(!gameRunning) return;
+  if(items.length > 16) return;
 
   const type = pickItemType();
   const el = document.createElement('div');
@@ -1233,11 +1247,10 @@ function spawnItem(){
 
   const size = window.innerWidth < 900 ? 60 : 72;
   const x = Math.random() * (window.innerWidth - size);
-  el.style.left = x + 'px';
-  el.style.top = '-80px';
   game.appendChild(el);
 
   items.push({el, x, y:-80, size, speed:3.8 + Math.random() * 3.8, type});
+  el.style.transform = 'translate3d(' + x + 'px,-80px,0)';
 }
 
 function loop(){
@@ -1248,18 +1261,18 @@ function loop(){
 }
 
 function movePlayer(){
-  if(keys.ArrowLeft || keys.a || keys.A) playerX -= 9;
-  if(keys.ArrowRight || keys.d || keys.D) playerX += 9;
-  if(touchDir !== 0) playerX += touchDir * 9;
+  if(keys.ArrowLeft || keys.a || keys.A) playerX -= 22;
+  if(keys.ArrowRight || keys.d || keys.D) playerX += 22;
+  if(touchDir !== 0) playerX += touchDir * 22;
   playerX = Math.max(54, Math.min(window.innerWidth - 54, playerX));
   updatePlayer();
 }
 
 function updatePlayer(){
   const r = containRect(4 / 3);
-  player.style.left = (playerX - player.offsetWidth / 2) + 'px';
-  // 下バーの上に立つ位置
-  player.style.top = (r.y + r.h * (421 / 480) - player.offsetHeight) + 'px';
+  const x = playerX - player.offsetWidth / 2;
+  const y = r.y + r.h * (421 / 480) - player.offsetHeight;
+  player.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
 }
 
 function moveItems(){
@@ -1268,7 +1281,7 @@ function moveItems(){
   for(let i = items.length - 1; i >= 0; i--){
     const item = items[i];
     item.y += item.speed;
-    item.el.style.top = item.y + 'px';
+    item.el.style.transform = 'translate3d(' + item.x + 'px,' + item.y + 'px,0)';
 
     const itemRect = item.el.getBoundingClientRect();
     const hit =
